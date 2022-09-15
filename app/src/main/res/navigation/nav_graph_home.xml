@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation"
+    app:startDestination="@id/homeFragment">
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.gmail.h1990.toshio.beanstalk.home.HomeFragment"
+        android:label="@string/home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_friendFragment"
+            app:destination="@id/friendFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/talkFragment"
+        android:name="com.gmail.h1990.toshio.beanstalk.talk.TalkFragment"
+        android:label="@string/talk"
+        tools:layout="@layout/fragment_talk" />
+    <fragment
+        android:id="@+id/friendFragment"
+        android:name="com.gmail.h1990.toshio.beanstalk.friend.FriendFragment"
+        android:label="@string/friend_list"
+        tools:layout="@layout/fragment_friend" />
+</navigation>

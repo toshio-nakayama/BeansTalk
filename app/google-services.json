@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "378682505558",
+    "project_id": "beanstalk-7d686",
+    "storage_bucket": "beanstalk-7d686.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378682505558:android:c047895197029797133ef7",
+        "android_client_info": {
+          "package_name": "com.gmail.h1990.toshio.beanstalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378682505558-v94nb2durgpou4p73pijpqacjjh4icga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMbprSIHsv3DBrVE28l1YorGpIAuNWwRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378682505558-v94nb2durgpou4p73pijpqacjjh4icga.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">BeansTalk</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_color">マイカラー</string>
+    <string name="email_address">メールアドレス</string>
+    <string name="password">パスワード</string>
+    <string name="login">ログイン</string>
+    <string name="new_registration">新規登録</string>
+    <string name="failed_to_login">Failed to login : %1$s</string>
+    <string name="offline">オフラインです</string>
+    <string name="name">名前</string>
+    <string name="confirm_password">パスワード（確認用）</string>
+    <string name="register">登録</string>
+    <string name="user_profile_updated">User profile updated.</string>
+    <string name="failed_to_upload">Failed to upload</string>
+    <string name="signup_successfully">アカウントを登録しました</string>
+    <string name="create_user_success">createUserWithEmail:success</string>
+    <string name="home">ホーム</string>
+    <string name="talk">トーク</string>
+    <string name="friend_list">ともだちリスト</string>
+    <string name="add">追加</string>
+    <string name="qr_scan">QRコードスキャン</string>
+    <string name="unexpected_value">"Unexpected value: "</string>
+    <string name="status_message">ステータスメッセージ</string>
+    <string name="logout">ログアウト</string>
+    <string name="input_item">入力項目</string>
+    <string name="profile">プロフィール</string>
+    <string name="not_set">未設定</string>
+    <string name="qr_generate_explanation">QRコードで友達を追加しましょう。</string>
+    <string name="my_qrcode">マイQRコード</string>
+    <string name="qr_reader_explanation"><![CDATA[>QRコードをスキャンして友達を追加できます。]]></string>
+    <string name="enter_message">メッセージを入力</string>
+    <string name="failed_to_send_message">Failed to send message</string>
+    <string name="message_sent_successfully">Message sent successfully</string>
+    <string name="settings">設定</string>
+    <string name="profile_edit">プロフィール編集</string>
+    <string name="select_theme_color">テーマカラーを選択してください</string>
+</resources>

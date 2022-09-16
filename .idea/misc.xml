@@ -5,7 +5,15 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/input_field.xml" value="0.1625" />
         <entry key="app/src/main/res/drawable/bottom_navigation_item_state.xml" value="0.1045" />
+        <entry key="app/src/main/res/drawable/bubble_a.xml" value="0.1625" />
+        <entry key="app/src/main/res/drawable/bubble_b.xml" value="0.1625" />
         <entry key="app/src/main/res/drawable/circle.xml" value="0.1495" />
+        <entry key="app/src/main/res/drawable/circle_emerald.xml" value="0.1625" />
+        <entry key="app/src/main/res/drawable/circle_lime.xml" value="0.1625" />
+        <entry key="app/src/main/res/drawable/circle_magenta.xml" value="0.1625" />
+        <entry key="app/src/main/res/drawable/circle_pink.xml" value="0.1625" />
+        <entry key="app/src/main/res/drawable/circle_turquoise.xml" value="0.1625" />
+        <entry key="app/src/main/res/drawable/circle_yellow.xml" value="0.1625" />
         <entry key="app/src/main/res/drawable/custom_email_icon.xml" value="0.1495" />
         <entry key="app/src/main/res/drawable/custom_input.xml" value="0.1495" />
         <entry key="app/src/main/res/drawable/custom_lock_icon.xml" value="0.1495" />
@@ -32,8 +40,11 @@
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.10729166666666666" />
         <entry key="app/src/main/res/layout/activity_talk.xml" value="0.192481884057971" />
+        <entry key="app/src/main/res/layout/color_list_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/custom_barcode_scanner.xml" value="0.10833333333333334" />
+        <entry key="app/src/main/res/layout/custom_list_layout.xml" value="0.10625" />
         <entry key="app/src/main/res/layout/custom_progressbar.xml" value="0.192481884057971" />
+        <entry key="app/src/main/res/layout/fragment_color_selection.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_friend.xml" value="0.10729166666666666" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.10729166666666666" />
         <entry key="app/src/main/res/layout/fragment_message_edit.xml" value="0.192481884057971" />
@@ -42,10 +53,12 @@
         <entry key="app/src/main/res/layout/fragment_qrgenerate.xml" value="0.10833333333333334" />
         <entry key="app/src/main/res/layout/fragment_talk.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/friend_list_layout.xml" value="0.192481884057971" />
-        <entry key="app/src/main/res/layout/message_layout.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/message_layout.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/reaction_list_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/talk_list_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.10833333333333334" />
         <entry key="app/src/main/res/menu/menu_home.xml" value="0.246875" />
+        <entry key="app/src/main/res/menu/menu_reaction.xml" value="0.24427083333333333" />
         <entry key="app/src/main/res/menu/menu_settings.xml" value="0.24427083333333333" />
       </map>
     </option>

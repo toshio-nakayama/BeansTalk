@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:autoSizeTextType="uniform"
-                android:background="@drawable/circle"
+                android:background="@drawable/circle_primary"
                 android:gravity="center"
                 android:padding="4dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"

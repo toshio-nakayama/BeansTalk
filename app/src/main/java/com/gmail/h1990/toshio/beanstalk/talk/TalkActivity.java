@@ -21,6 +21,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Gravity;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -45,6 +48,7 @@ import com.mobsandgeeks.saripaar.Validator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.*;
 
 public class TalkActivity extends AppCompatActivity implements View.OnClickListener {
@@ -213,7 +217,9 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                     sendMessage(validation.trimAndNormalize(etMessage.getText().toString()),
                             MESSAGE_TYPE_TEXT, pushId);
                 } else {
-                    Toast.makeText(this, R.string.offline, Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(this, R.string.offline, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
                 }
 
                 break;

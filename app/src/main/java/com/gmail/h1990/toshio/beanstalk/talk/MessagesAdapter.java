@@ -4,7 +4,12 @@ import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
 
 import android.content.Context;
+
+//import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,12 +17,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
+import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -30,6 +38,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     private Context context;
     private List<MessageModel> messageModelList;
     private FirebaseAuth firebaseAuth;
+    private ActionMode actionMode;
 
     public MessagesAdapter(Context context, List<MessageModel> messageModelList) {
         this.context = context;
@@ -67,11 +76,18 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             StorageReference mRef =
                     FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(photoName);
             mRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                Glide.with(context)
-                        .load(uri)
-                        .placeholder(R.drawable.default_profile)
-                        .error(R.drawable.default_profile)
-                        .into(holder.ivProfile);
+                GlideUtils.setPhoto(context, uri, holder.ivProfile);
+            });
+            holder.tvReceivedMessage.setOnLongClickListener(view -> {
+                if (actionMode != null) {
+                    return false;
+                } else {
+//                    actionMode = ((AppCompatActivity) context).startActionMode(actionModeCallback,
+//                            ActionMode.TYPE_PRIMARY);
+                    actionMode =
+                            ((AppCompatActivity) context).startSupportActionMode(actionModeCallback);
+                }
+                return false;
             });
         }
     }
@@ -80,6 +96,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     public int getItemCount() {
         return messageModelList.size();
     }
+
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
         private LinearLayout llSent, llReceived;
@@ -100,5 +117,31 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             clMessage = itemView.findViewById(R.id.cl_message);
         }
     }
+
+    public ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.menu_reaction, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            actionMode = null;
+        }
+    };
+
+
 }
 

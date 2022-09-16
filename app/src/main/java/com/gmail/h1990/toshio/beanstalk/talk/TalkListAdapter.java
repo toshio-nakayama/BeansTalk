@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.model.TalkListModel;
+import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -51,16 +52,7 @@ public class TalkListAdapter extends RecyclerView.Adapter<TalkListAdapter.TalkLi
 
         StorageReference storageReference =
                 FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER + "/" + talkListModel.getPhotoName());
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Glide.with(context)
-                        .load(uri)
-                        .placeholder(R.drawable.default_profile)
-                        .error(R.drawable.default_profile)
-                        .into(holder.ivProfile);
-            }
-        });
+        storageReference.getDownloadUrl().addOnSuccessListener(uri -> GlideUtils.setPhoto(context, uri, holder.ivProfile));
 
         holder.llTalkList.setOnClickListener(new View.OnClickListener() {
 

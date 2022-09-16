@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -168,8 +169,10 @@ public class SignupActivity extends AppCompatActivity {
         UserModel userModel = new UserModel(name, email, photo);
         databaseReference.child(USERS).child(userId).setValue(userModel).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(SignupActivity.this, R.string.signup_successfully,
-                        Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(SignupActivity.this, R.string.signup_successfully,
+                        Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
                 startActivity(new Intent(SignupActivity.this, LoginActivity.class));
             }
         });

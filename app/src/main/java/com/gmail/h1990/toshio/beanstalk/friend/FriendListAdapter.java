@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.model.FriendListModel;
 import com.gmail.h1990.toshio.beanstalk.profile.FriendProfileActivity;
+import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -51,11 +52,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
         StorageReference storageReference =
                 FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER + SLASH + friendListModel.getPhotoName());
         storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
-            Glide.with(context)
-                    .load(uri)
-                    .placeholder(R.drawable.default_profile)
-                    .error(R.drawable.default_profile)
-                    .into(holder.ivProfile);
+            GlideUtils.setPhoto(context, uri, holder.ivProfile);
         });
 
         holder.llFriendList.setOnClickListener(v -> {

@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/mycolor_button"
-        android:drawableLeft="@drawable/circle"
+        android:drawableLeft="@drawable/circle_primary"
         android:drawablePadding="8dp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"

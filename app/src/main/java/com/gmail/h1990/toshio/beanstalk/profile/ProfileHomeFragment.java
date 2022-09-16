@@ -1,7 +1,6 @@
 package com.gmail.h1990.toshio.beanstalk.profile;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -23,22 +22,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.gmail.h1990.toshio.beanstalk.R;
-import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
+import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Objects;
-
 public class ProfileHomeFragment extends Fragment implements MenuProvider {
     private TextView tvName;
 
     private ImageView ivProfile;
-    private FirebaseUser firebaseUser;
+    private FirebaseUser currentUser;
     private DatabaseReference databaseReference;
     private Button btLogout;
 
@@ -66,7 +62,7 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
         super.onCreate(savedInstanceState);
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
+        currentUser = firebaseAuth.getCurrentUser();
     }
 
     @Override
@@ -86,24 +82,11 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
                 callback.onLogoutBtnClick();
             }
         });
-        setProfile();
+        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), ivProfile);
+        tvName.setText(currentUser.getDisplayName());
         MenuHost menuHost = requireActivity();
         menuHost.addMenuProvider(this, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-    }
-
-    private void setProfile() {
-        if (firebaseUser != null) {
-            tvName.setText(firebaseUser.getDisplayName());
-            Uri serverFileUri = firebaseUser.getPhotoUrl();
-            if (serverFileUri != null) {
-                Glide.with(this)
-                        .load(serverFileUri)
-                        .placeholder(R.drawable.default_profile)
-                        .error(R.drawable.default_profile)
-                        .into(ivProfile);
-            }
-        }
     }
 
 

@@ -9,6 +9,11 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="myColor">#cc1669</color>
+    <color name="magenta">#ff28a8</color>
+    <color name="emerald">#09ffa0</color>
+    <color name="lime">#00ff00</color>
+    <color name="turquoise">#40e0d0</color>
+    <color name="yellow">#ffff00</color>
     <color name="textColorPrimary">#FFFFFFFF</color>
     <color name="textColorLink">#1a0dab</color>
 </resources>

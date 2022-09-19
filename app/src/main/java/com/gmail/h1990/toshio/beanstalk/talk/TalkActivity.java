@@ -1,5 +1,8 @@
 package com.gmail.h1990.toshio.beanstalk.talk;
 
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.MESSAGE_TYPE_TEXT;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.SLASH;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
@@ -9,30 +12,30 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_FROM;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_ID;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_TIME;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_TYPE;
+import static com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment.DIALOG_TAG;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Gravity;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
+import com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment;
 import com.gmail.h1990.toshio.beanstalk.util.ConnectivityCheck;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,16 +52,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.*;
+public class TalkActivity extends AppCompatActivity implements View.OnClickListener, MessagesAdapter.AdapterCallback {
 
-public class TalkActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private ImageView ivSend;
     private EditText etMessage;
     private DatabaseReference rootReference;
-    private FirebaseAuth firebaseAuth;
     private String currentUserId, talkUserId;
-    private Validator validator;
     private Validation validation;
     private RecyclerView rvMessages;
     private SwipeRefreshLayout srlMessages;
@@ -66,24 +64,22 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     private List<MessageModel> messageList;
     private int currentPage = 1;
     private static final int RECORD_PER_PAGE = 30;
-    private DatabaseReference databaseReferenceMessages;
     private ChildEventListener childEventListener;
     private String talkUserName;
-    private String talkUserPhotoName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_talk);
 
-        ivSend = findViewById(R.id.iv_send);
+        ImageView ivSend = findViewById(R.id.iv_send);
         etMessage = findViewById(R.id.et_message);
         rvMessages = findViewById(R.id.rv_messages);
         srlMessages = findViewById(R.id.srl_messages);
-        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         rootReference = FirebaseDatabase.getInstance().getReference();
         currentUserId = firebaseAuth.getCurrentUser().getUid();
-        validator = new Validator(this);
+        Validator validator = new Validator(this);
         validation = new Validation(validator);
         validator.setValidationListener(validation);
         if (getIntent().hasExtra(USER_KEY)) {
@@ -93,7 +89,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
             talkUserName = getIntent().getStringExtra(USER_NAME);
         }
         if (getIntent().hasExtra(PHOTO_NAME)) {
-            talkUserPhotoName = getIntent().getStringExtra(PHOTO_NAME);
+            String talkUserPhotoName = getIntent().getStringExtra(PHOTO_NAME);
         }
         ivSend.setOnClickListener(this);
         messageList = new ArrayList<>();
@@ -143,11 +139,11 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                 messageMap.put(MESSAGE_TYPE, msgType);
                 messageMap.put(MESSAGE_FROM, currentUserId);
                 messageMap.put(MESSAGE_TIME, ServerValue.TIMESTAMP);
-                String currentUserReference = MESSAGES + "/" + currentUserId + "/" + talkUserId;
-                String talkUserReference = MESSAGES + "/" + talkUserId + "/" + currentUserId;
+                String currentUserReference = MESSAGES + SLASH + currentUserId + SLASH + talkUserId;
+                String talkUserReference = MESSAGES + SLASH + talkUserId + SLASH + currentUserId;
                 HashMap messageUserMap = new HashMap();
-                messageUserMap.put(currentUserReference + "/" + pushId, messageMap);
-                messageUserMap.put(talkUserReference + "/" + pushId, messageMap);
+                messageUserMap.put(currentUserReference + SLASH + pushId, messageMap);
+                messageUserMap.put(talkUserReference + SLASH + pushId, messageMap);
                 etMessage.getEditableText().clear();
                 rootReference.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                     @Override
@@ -167,7 +163,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadMessages() {
         messageList.clear();
-        databaseReferenceMessages = rootReference.child(MESSAGES).child(currentUserId).child(talkUserId);
+        DatabaseReference databaseReferenceMessages = rootReference.child(MESSAGES).child(currentUserId).child(talkUserId);
         Query messageQuery = databaseReferenceMessages.limitToLast(currentPage = RECORD_PER_PAGE);
         if (childEventListener != null) {
             messageQuery.removeEventListener(childEventListener);
@@ -224,5 +220,15 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
         }
+    }
+
+    @Override
+    public void onMethodCallback() {
+        showDialog();
+    }
+
+    private void showDialog() {
+        DialogFragment dialogFragment = new ReactionFragment();
+        dialogFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 }

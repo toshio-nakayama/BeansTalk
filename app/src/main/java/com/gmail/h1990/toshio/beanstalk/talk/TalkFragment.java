@@ -6,16 +6,15 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TIME_STAMP;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.model.TalkListModel;
@@ -44,12 +43,6 @@ public class TalkFragment extends Fragment {
     private Query query;
 
     public TalkFragment() {
-    }
-
-    public static TalkFragment newInstance() {
-        TalkFragment fragment = new TalkFragment();
-        Bundle args = new Bundle();
-        return fragment;
     }
 
     @Override

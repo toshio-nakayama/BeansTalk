@@ -2,6 +2,7 @@ package com.gmail.h1990.toshio.beanstalk.friend;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.SLASH;
+import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
 
@@ -17,10 +18,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.model.FriendListModel;
-import com.gmail.h1990.toshio.beanstalk.profile.FriendProfileActivity;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -59,6 +58,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
             Intent intent = new Intent(context, FriendProfileActivity.class);
             intent.putExtra(USER_KEY, friendListModel.getUserId());
             intent.putExtra(USER_NAME, friendListModel.getUserName());
+            intent.putExtra(PHOTO_NAME, friendListModel.getPhotoName());
             context.startActivity(intent);
         });
 

@@ -1,13 +1,13 @@
 package com.gmail.h1990.toshio.beanstalk.talk;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.SLASH;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +18,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.model.TalkListModel;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -51,7 +49,7 @@ public class TalkListAdapter extends RecyclerView.Adapter<TalkListAdapter.TalkLi
         holder.tvName.setText(talkListModel.getUserName());
 
         StorageReference storageReference =
-                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER + "/" + talkListModel.getPhotoName());
+                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER + SLASH + talkListModel.getPhotoName());
         storageReference.getDownloadUrl().addOnSuccessListener(uri -> GlideUtils.setPhoto(context, uri, holder.ivProfile));
 
         holder.llTalkList.setOnClickListener(new View.OnClickListener() {

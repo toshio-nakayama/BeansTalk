@@ -75,7 +75,7 @@
             android:drawableTop="@drawable/ic_exit"
             android:gravity="center"
             android:text="@string/logout"
-            android:textColor="@color/textColorPrimary"
+
             android:textSize="11sp"
             app:backgroundTint="@null" />
 

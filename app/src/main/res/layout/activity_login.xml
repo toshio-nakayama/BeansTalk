@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="40dp"
     android:background="@android:color/background_dark"
+    android:padding="40dp"
     tools:context=".login.LoginActivity">
 
     <include
@@ -35,7 +35,7 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:text="@string/my_color"
-        android:textColor="@color/myColor"
+        android:textColor="?attr/colorPrimary"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/et_email"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,11 +52,11 @@
         android:drawablePadding="12dp"
         android:ems="10"
         android:hint="@string/email_address"
-        android:textColorHint="@android:color/darker_gray"
         android:inputType="textEmailAddress"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:textColor="@color/textColorPrimary"
+        android:textColorHint="@android:color/darker_gray"
+
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,12 +71,12 @@
         android:drawableStart="@drawable/custom_lock_icon"
         android:drawablePadding="12dp"
         android:hint="@string/password"
-        android:textColorHint="@android:color/darker_gray"
         android:inputType="textPassword"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
+        android:textColorHint="@android:color/darker_gray"
         android:textSize="14sp"
-        android:textColor="@color/textColorPrimary"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_email" />
@@ -89,7 +89,7 @@
         android:background="@drawable/round_button_primary"
         android:onClick="onLoginButtonClick"
         android:text="@string/login"
-        android:textColor="@color/textColorPrimary"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_password" />
@@ -105,7 +105,6 @@
         android:text="@string/new_registration"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textStyle="bold"
-        android:textColor="@color/textColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bt_login" />

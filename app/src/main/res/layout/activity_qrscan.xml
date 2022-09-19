@@ -40,7 +40,7 @@
         android:background="@drawable/round_button_primary"
         android:onClick="onMyQRCodeButtonClick"
         android:text="@string/my_qrcode"
-        android:textColor="@color/textColorPrimary" />
+         />
 
     <TextView
         android:id="@+id/tv_qr_reader_explanation"

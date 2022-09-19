@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/background_dark"
     tools:context=".talk.TalkActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -37,12 +38,11 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/input_field"
-            android:backgroundTint="@android:color/darker_gray"
-            android:textColor="@color/textColorPrimary"
+            android:backgroundTint="@color/gray"
+
             android:ems="10"
             android:gravity="center_vertical"
             android:hint="@string/enter_message"
-            android:textColorHint="@color/textColorPrimary"
             android:inputType="textPersonName"
             android:minHeight="40dp"
             android:padding="8dp" />

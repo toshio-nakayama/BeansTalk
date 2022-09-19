@@ -4,30 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".profile.FriendProfileActivity">
+    tools:context=".friend.FriendProfileActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/background_dark"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/Theme.BeansTalk.Toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/iv_background_photo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:scaleType="centerCrop"
         android:src="@drawable/default_background"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
-
-    <ImageButton
-        android:id="@+id/ib_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@null"
-        android:minWidth="32dp"
-        android:minHeight="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/close_button"
-        tools:ignore="SpeakableTextPresentCheck" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/iv_profile"
@@ -58,27 +57,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:drawablePadding="12dp"
             android:gravity="center|center_vertical"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             tools:text="@string/name" />
 
         <TextView
-            android:id="@+id/status_message"
+            android:id="@+id/tv_status_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:ellipsize="marquee"
+            android:ems="12"
             android:fadingEdge="horizontal"
             android:gravity="center|center_vertical"
-            android:marqueeRepeatLimit="marquee_forever"
             android:maxLines="1"
-            android:scrollHorizontally="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/white"
             tools:text="@string/status_message" />
 
     </LinearLayout>
@@ -93,10 +91,8 @@
         android:drawableTop="@drawable/ic_chat_bubble"
         android:text="@string/talk"
         android:textSize="11sp"
-        android:textColor="@color/textColorPrimary"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

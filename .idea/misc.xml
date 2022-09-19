@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable-v24/circle.xml" value="0.1625" />
         <entry key="app/src/main/res/drawable-v24/input_field.xml" value="0.1625" />
         <entry key="app/src/main/res/drawable/bottom_navigation_item_state.xml" value="0.1045" />
         <entry key="app/src/main/res/drawable/bubble_a.xml" value="0.1625" />
@@ -34,12 +35,13 @@
         <entry key="app/src/main/res/layout/activity_add_friend.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/activity_add_friend2.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/activity_float.xml" value="0.192481884057971" />
-        <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.192481884057971" />
+        <entry key="app/src/main/res/layout/activity_friend_profile.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/activity_profile.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.10729166666666666" />
         <entry key="app/src/main/res/layout/activity_talk.xml" value="0.192481884057971" />
+        <entry key="app/src/main/res/layout/color_btn_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/color_list_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/custom_barcode_scanner.xml" value="0.10833333333333334" />
         <entry key="app/src/main/res/layout/custom_list_layout.xml" value="0.10625" />
@@ -48,12 +50,15 @@
         <entry key="app/src/main/res/layout/fragment_friend.xml" value="0.10729166666666666" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.10729166666666666" />
         <entry key="app/src/main/res/layout/fragment_message_edit.xml" value="0.192481884057971" />
+        <entry key="app/src/main/res/layout/fragment_my_color.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/fragment_profile_edit.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/fragment_profile_home.xml" value="0.165" />
         <entry key="app/src/main/res/layout/fragment_qrgenerate.xml" value="0.10833333333333334" />
+        <entry key="app/src/main/res/layout/fragment_reaction.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_talk.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/friend_list_layout.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/message_layout.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/reaction_btn_layout.xml" value="0.165" />
         <entry key="app/src/main/res/layout/reaction_list_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/talk_list_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.10833333333333334" />

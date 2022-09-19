@@ -31,10 +31,10 @@
             android:id="@+id/tv_sent_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
             android:autoLink="all"
-            android:textColorLink="@color/textColorLink"
             android:background="@drawable/outgoing_bubble"
+
+            android:padding="12dp"
             android:textColor="@color/white"
             tools:text="今何してる？" />
     </LinearLayout>
@@ -43,8 +43,8 @@
         android:id="@+id/ll_received"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,8 +55,8 @@
             android:id="@+id/iv_profile"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            app:civ_border="false"
-            android:src="@drawable/default_profile" />
+            android:src="@drawable/default_profile"
+            app:civ_border="false" />
 
         <TextView
             android:id="@+id/tv_received_message"
@@ -65,8 +65,8 @@
             android:autoLink="all"
             android:background="@drawable/incoming_bubble"
             android:padding="12dp"
-            android:textColor="@color/purple_200"
-            android:textColorLink="@color/textColorLink"
+            android:textColor="@color/black"
+
             tools:text="今何してる？" />
 
         <TextView

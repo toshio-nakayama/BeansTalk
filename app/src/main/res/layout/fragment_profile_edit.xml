@@ -21,7 +21,7 @@
             android:minHeight="?attr/actionBarSize"
             android:text="@string/profile"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/textColorPrimary" />
+             />
 
         <ImageButton
             android:id="@+id/ib_close"
@@ -116,7 +116,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/name"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/textColorPrimary" />
+             />
 
 
         <EditText
@@ -126,9 +126,7 @@
             android:drawableEnd="@drawable/ic_arrow_right_white"
             android:hint="@string/not_set"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColorHint="@color/textColorPrimary"
-            tools:text="@string/name"
-            tools:textColor="@color/textColorPrimary" />
+            tools:text="@string/name" />
 
     </LinearLayout>
 
@@ -144,7 +142,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/status_message"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/textColorPrimary" />
+             />
 
         <EditText
             android:id="@+id/et_status_message"
@@ -152,7 +150,6 @@
             android:layout_height="60dp"
             android:drawableEnd="@drawable/ic_arrow_right_white"
             android:hint="@string/not_set"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColorHint="@color/textColorPrimary" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </LinearLayout>
 </LinearLayout>

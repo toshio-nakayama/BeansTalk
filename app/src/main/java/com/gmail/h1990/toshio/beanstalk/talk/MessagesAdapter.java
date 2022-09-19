@@ -4,12 +4,7 @@ import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
 
 import android.content.Context;
-
-//import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,9 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,11 +30,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     private Context context;
     private List<MessageModel> messageModelList;
     private FirebaseAuth firebaseAuth;
-    private ActionMode actionMode;
+
+    private AdapterCallback mAdapterCallback;
 
     public MessagesAdapter(Context context, List<MessageModel> messageModelList) {
         this.context = context;
         this.messageModelList = messageModelList;
+        this.mAdapterCallback = ((AdapterCallback) context);
     }
 
     @NonNull
@@ -79,15 +73,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 GlideUtils.setPhoto(context, uri, holder.ivProfile);
             });
             holder.tvReceivedMessage.setOnLongClickListener(view -> {
-                if (actionMode != null) {
-                    return false;
-                } else {
-//                    actionMode = ((AppCompatActivity) context).startActionMode(actionModeCallback,
-//                            ActionMode.TYPE_PRIMARY);
-                    actionMode =
-                            ((AppCompatActivity) context).startSupportActionMode(actionModeCallback);
+                try {
+                    mAdapterCallback.onMethodCallback();
+                } catch (ClassCastException exception) {
+                    // do something
                 }
-                return false;
+                return true;
             });
         }
     }
@@ -98,12 +89,15 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     }
 
 
-    public class MessageViewHolder extends RecyclerView.ViewHolder {
-        private LinearLayout llSent, llReceived;
-        private TextView tvSentMessage, tvSentMessageTime, tvReceivedMessage,
-                tvReceivedMessageTime;
-        private ImageView ivProfile;
-        private ConstraintLayout clMessage;
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+        private final LinearLayout llSent;
+        private final LinearLayout llReceived;
+        private final TextView tvSentMessage;
+        private final TextView tvSentMessageTime;
+        private final TextView tvReceivedMessage;
+        private final TextView tvReceivedMessageTime;
+        private final ImageView ivProfile;
+        private final ConstraintLayout clMessage;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -118,30 +112,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         }
     }
 
-    public ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            MenuInflater inflater = actionMode.getMenuInflater();
-            inflater.inflate(R.menu.menu_reaction, menu);
-            return true;
-        }
 
-        @Override
-        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode actionMode) {
-            actionMode = null;
-        }
-    };
-
-
+    public static interface AdapterCallback {
+        void onMethodCallback();
+    }
 }
 

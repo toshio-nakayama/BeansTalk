@@ -68,7 +68,7 @@
             android:hint="@string/name"
             android:textColorHint="@android:color/darker_gray"
             android:inputType="text"
-            android:textColor="@color/textColorPrimary"
+
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:textSize="14sp"
@@ -89,7 +89,7 @@
             android:hint="@string/email_address"
             android:textColorHint="@android:color/darker_gray"
             android:inputType="textEmailAddress"
-            android:textColor="@color/textColorPrimary"
+
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:textSize="14sp"
@@ -108,7 +108,7 @@
             android:hint="@string/password"
             android:textColorHint="@android:color/darker_gray"
             android:inputType="textPassword"
-            android:textColor="@color/textColorPrimary"
+
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:textSize="14sp"
@@ -127,7 +127,7 @@
             android:hint="@string/confirm_password"
             android:textColorHint="@android:color/darker_gray"
             android:inputType="textPassword"
-            android:textColor="@color/textColorPrimary"
+
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:textSize="14sp"
@@ -144,7 +144,7 @@
         android:background="@drawable/round_button_primary"
         android:onClick="onSignupButtonClick"
         android:text="@string/register"
-        android:textColor="@color/textColorPrimary"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

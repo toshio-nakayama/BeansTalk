@@ -36,4 +36,5 @@
     <string name="settings">設定</string>
     <string name="profile_edit">プロフィール編集</string>
     <string name="select_theme_color">テーマカラーを選択してください</string>
+    <string name="save">保存</string>
 </resources>

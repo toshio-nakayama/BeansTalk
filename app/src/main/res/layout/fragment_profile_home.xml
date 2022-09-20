@@ -51,7 +51,7 @@
             tools:text="@string/name" />
 
         <TextView
-            android:id="@+id/status_message"
+            android:id="@+id/tv_status_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -60,6 +60,7 @@
             android:gravity="center|center_vertical"
             android:marqueeRepeatLimit="marquee_forever"
             android:maxLines="1"
+            android:textColor="@color/white"
             android:scrollHorizontally="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="@string/status_message" />

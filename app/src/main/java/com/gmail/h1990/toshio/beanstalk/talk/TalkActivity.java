@@ -1,7 +1,6 @@
 package com.gmail.h1990.toshio.beanstalk.talk;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.MESSAGE_TYPE_TEXT;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.SLASH;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
@@ -139,11 +138,11 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                 messageMap.put(MESSAGE_TYPE, msgType);
                 messageMap.put(MESSAGE_FROM, currentUserId);
                 messageMap.put(MESSAGE_TIME, ServerValue.TIMESTAMP);
-                String currentUserReference = MESSAGES + SLASH + currentUserId + SLASH + talkUserId;
-                String talkUserReference = MESSAGES + SLASH + talkUserId + SLASH + currentUserId;
+                String currentUserReference = MESSAGES + "/" + currentUserId + "/" + talkUserId;
+                String talkUserReference = MESSAGES + "/" + talkUserId + "/" + currentUserId;
                 HashMap messageUserMap = new HashMap();
-                messageUserMap.put(currentUserReference + SLASH + pushId, messageMap);
-                messageUserMap.put(talkUserReference + SLASH + pushId, messageMap);
+                messageUserMap.put(currentUserReference + "/" + pushId, messageMap);
+                messageUserMap.put(talkUserReference + "/" + pushId, messageMap);
                 etMessage.getEditableText().clear();
                 rootReference.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                     @Override

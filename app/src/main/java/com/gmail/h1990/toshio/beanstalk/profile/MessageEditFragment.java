@@ -1,5 +1,10 @@
 package com.gmail.h1990.toshio.beanstalk.profile;
 
+import static com.gmail.h1990.toshio.beanstalk.common.Extras.REQUEST_KEY_STATUS_MESSAGE;
+import static com.gmail.h1990.toshio.beanstalk.common.Extras.REQUEST_KEY_USER_NAME;
+import static com.gmail.h1990.toshio.beanstalk.common.Extras.STATUS_MESSAGE;
+import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
+
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -57,7 +62,17 @@ public class MessageEditFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        
+        getParentFragmentManager().setFragmentResultListener(REQUEST_KEY_USER_NAME, this,
+                (requestKey, result) -> {
+                    String name = result.getString(USER_NAME);
+                    etInput.setText(name);
+                });
+        getParentFragmentManager().setFragmentResultListener(REQUEST_KEY_STATUS_MESSAGE, this,
+                (requestKey, result) -> {
+                    String message = result.getString(STATUS_MESSAGE);
+                    etInput.setText(message);
+                });
+
     }
 
     private void initView() {

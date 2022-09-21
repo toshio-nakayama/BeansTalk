@@ -1,13 +1,13 @@
 package com.gmail.h1990.toshio.beanstalk.addfriend;
 
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.NAME;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TIME_STAMP;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,10 +17,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.gmail.h1990.toshio.beanstalk.MainActivity;
 import com.gmail.h1990.toshio.beanstalk.R;
-import com.gmail.h1990.toshio.beanstalk.common.Constants;
 import com.gmail.h1990.toshio.beanstalk.common.Extras;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -70,9 +72,9 @@ public class AddFriendActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DataSnapshot snapshot = task.getResult();
                     if (snapshot.exists()) {
-                        String photoName = userId + ".jpg";
+                        String photoName = userId + EXT_JPG;
                         final StorageReference fileReference = FirebaseStorage.getInstance().getReference()
-                                .child(Constants.IMAGES_FOLDER + "/" + photoName);
+                                .child(IMAGES_FOLDER).child(PHOTO).child(photoName);
                         fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
                             tvName.setText(snapshot.child(NAME).getValue().toString());
                             Glide.with(AddFriendActivity.this)

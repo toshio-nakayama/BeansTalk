@@ -1,10 +1,10 @@
 package com.gmail.h1990.toshio.beanstalk.talk;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.SLASH;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 
 import android.content.Context;
 import android.content.Intent;
@@ -49,19 +49,15 @@ public class TalkListAdapter extends RecyclerView.Adapter<TalkListAdapter.TalkLi
         holder.tvName.setText(talkListModel.getUserName());
 
         StorageReference storageReference =
-                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER + SLASH + talkListModel.getPhotoName());
+                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(talkListModel.getPhotoName());
         storageReference.getDownloadUrl().addOnSuccessListener(uri -> GlideUtils.setPhoto(context, uri, holder.ivProfile));
 
-        holder.llTalkList.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, TalkActivity.class);
-                intent.putExtra(USER_KEY, talkListModel.getUserId());
-                intent.putExtra(USER_NAME, talkListModel.getUserName());
-                intent.putExtra(PHOTO_NAME, talkListModel.getPhotoName());
-                context.startActivity(intent);
-            }
+        holder.llTalkList.setOnClickListener(v -> {
+            Intent intent = new Intent(context, TalkActivity.class);
+            intent.putExtra(USER_KEY, talkListModel.getUserId());
+            intent.putExtra(USER_NAME, talkListModel.getUserName());
+            intent.putExtra(PHOTO_NAME, talkListModel.getPhotoName());
+            context.startActivity(intent);
         });
 
     }

@@ -1,10 +1,11 @@
 package com.gmail.h1990.toshio.beanstalk.signup;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
+import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_URI_KEY;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,10 +22,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
 import com.gmail.h1990.toshio.beanstalk.model.UserModel;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -41,9 +50,7 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.mobsandgeeks.saripaar.annotation.Password;
 import com.mobsandgeeks.saripaar.annotation.Pattern;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.*;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_URI_KEY;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
+import java.util.Objects;
 
 public class SignupActivity extends AppCompatActivity {
     @NotEmpty
@@ -72,9 +79,9 @@ public class SignupActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
-    private Uri localFileUri, serverFileUri;
+    private Uri localFileUri;
     private FirebaseAuth firebaseAuth;
-    SharedPreferences pref;
+    private SharedPreferences pref;
 
 
     @Override
@@ -137,36 +144,46 @@ public class SignupActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, getString(R.string.user_profile_updated));
+                    } else {
+                        Log.e(TAG, getString(R.string.failed_to_update));
                     }
                 });
     }
 
+
     private void updatePhoto() {
         String photo = firebaseUser.getUid() + EXT_JPG;
-        StorageReference mRef = storageReference.child(IMAGES_FOLDER + SLASH + photo);
-        UploadTask uploadTask = mRef.putFile(localFileUri);
-        uploadTask.addOnFailureListener(exception -> Log.e(TAG, getString(R.string.failed_to_upload)))
-                .addOnSuccessListener(taskSnapshot -> mRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    String photo1 = uri.getPath();
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString(PHOTO_URI_KEY, photo1);
-                    editor.commit();
-                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                            .setPhotoUri(uri)
-                            .build();
-                    firebaseUser.updateProfile(profileUpdates)
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, getString(R.string.user_profile_updated));
-                                }
-                            });
-                }));
+        StorageReference fileRef =
+                storageReference.child(IMAGES_FOLDER).child(PHOTO).child(photo);
+        UploadTask uploadTask = fileRef.putFile(localFileUri);
+        Task<Uri> urlTask = uploadTask.continueWithTask((Continuation<UploadTask.TaskSnapshot, Task<Uri>>) task -> {
+            if (!task.isSuccessful()) {
+                throw Objects.requireNonNull(task.getException());
+            }
+            return fileRef.getDownloadUrl();
+        }).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Uri uri = task.getResult();
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(PHOTO_URI_KEY, uri.getPath());
+                editor.commit();
+                UserProfileChangeRequest profileUpdates =
+                        new UserProfileChangeRequest.Builder().setPhotoUri(uri).build();
+                firebaseUser.updateProfile(profileUpdates).addOnCompleteListener(task1 -> {
+                });
+            }
+        });
     }
 
     private void writeNewUser() {
-        String photo = pref.getString(PHOTO_URI_KEY, "");
         String userId = firebaseUser.getUid();
-        UserModel userModel = new UserModel(name, email, photo);
+        String photo = pref.getString(PHOTO_URI_KEY, "");
+        SharedPreferences.Editor editor = pref.edit();
+        editor.remove(PHOTO_URI_KEY);
+        editor.commit();
+        String statusMessage = "";
+        String backgroundPhoto = "";
+        UserModel userModel = new UserModel(name, email, statusMessage, photo, backgroundPhoto);
         databaseReference.child(USERS).child(userId).setValue(userModel).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast toast = Toast.makeText(SignupActivity.this, R.string.signup_successfully,
@@ -176,7 +193,6 @@ public class SignupActivity extends AppCompatActivity {
                 startActivity(new Intent(SignupActivity.this, LoginActivity.class));
             }
         });
-
     }
 
 
@@ -186,20 +202,17 @@ public class SignupActivity extends AppCompatActivity {
         password = validation.trimAndNormalize(etPassword.getText().toString());
         confirmPassword = validation.trimAndNormalize(etConfirmPassword.getText().toString());
         if (validation.validate()) {
-            firebaseAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, getString(R.string.create_user_success));
-                            firebaseUser = firebaseAuth.getCurrentUser();
-                            if (localFileUri != null) {
-                                updatePhoto();
-                            }
-                            updateName();
-                            writeNewUser();
-
-                        }
-                    });
+            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, getString(R.string.create_user_success));
+                    firebaseUser = firebaseAuth.getCurrentUser();
+                    if (localFileUri != null) {
+                        updatePhoto();
+                    }
+                    updateName();
+                    writeNewUser();
+                }
+            });
         }
     }
-
 }

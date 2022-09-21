@@ -85,7 +85,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -94,13 +93,13 @@
             android:textColor="@color/white" />
 
 
-        <EditText
-            android:id="@+id/et_name"
+        <TextView
+            android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:drawableEnd="@drawable/ic_arrow_right_white"
-            android:hint="@string/not_set"
+            android:gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:drawableEndCompat="@drawable/ic_arrow_right_white"
             tools:text="@string/name" />
 
     </LinearLayout>
@@ -111,7 +110,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_status_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -119,13 +117,14 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/white" />
 
-        <EditText
-            android:id="@+id/et_status_message"
+        <TextView
+            android:id="@+id/tv_status_message"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:drawableEnd="@drawable/ic_arrow_right_white"
+            android:gravity="center_vertical"
             android:hint="@string/not_set"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:drawableEndCompat="@drawable/ic_arrow_right_white"
             tools:text="@string/status_message" />
     </LinearLayout>
 </LinearLayout>

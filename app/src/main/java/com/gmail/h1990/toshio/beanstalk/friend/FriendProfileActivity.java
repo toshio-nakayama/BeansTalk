@@ -1,10 +1,10 @@
 package com.gmail.h1990.toshio.beanstalk.friend;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.SLASH;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -89,7 +89,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         tvName.setText(friendUserName);
         tvStatusMessage.setText("");
         StorageReference storageReference =
-                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER + SLASH + friendUserPhotoName);
+                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(friendUserPhotoName);
         storageReference.getDownloadUrl().addOnSuccessListener(uri ->
                 GlideUtils.setPhoto(this, uri,
                         ivProfile));

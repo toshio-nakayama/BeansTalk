@@ -1,10 +1,10 @@
 package com.gmail.h1990.toshio.beanstalk.friend;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.SLASH;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 
 import android.content.Context;
 import android.content.Intent;
@@ -47,9 +47,8 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
     public void onBindViewHolder(@NonNull FriendListViewHolder holder, int position) {
         FriendListModel friendListModel = friendModelList.get(position);
         holder.tvName.setText(friendListModel.getUserName());
-
         StorageReference storageReference =
-                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER + SLASH + friendListModel.getPhotoName());
+                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(friendListModel.getPhotoName());
         storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
             GlideUtils.setPhoto(context, uri, holder.ivProfile);
         });

@@ -2,6 +2,7 @@ package com.gmail.h1990.toshio.beanstalk.talk;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -68,7 +69,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             holder.tvReceivedMessageTime.setText(messageTime);
             String photoName = messageModel.getMessageFrom() + EXT_JPG;
             StorageReference mRef =
-                    FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(photoName);
+                    FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(photoName);
             mRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 GlideUtils.setPhoto(context, uri, holder.ivProfile);
             });

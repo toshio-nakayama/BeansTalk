@@ -13,7 +13,6 @@
     <string name="confirm_password">パスワード（確認用）</string>
     <string name="register">登録</string>
     <string name="user_profile_updated">User profile updated.</string>
-    <string name="failed_to_upload">Failed to upload</string>
     <string name="signup_successfully">アカウントを登録しました</string>
     <string name="create_user_success">createUserWithEmail:success</string>
     <string name="home">ホーム</string>
@@ -37,4 +36,5 @@
     <string name="profile_edit">プロフィール編集</string>
     <string name="select_theme_color">テーマカラーを選択してください</string>
     <string name="save">保存</string>
+    <string name="failed_to_update">Failed to update</string>
 </resources>

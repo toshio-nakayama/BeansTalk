@@ -112,14 +112,11 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
     }
 
     private void setupStatusMessage() {
-        //DEBUG
-        tvStatusMessage.setText("test message . test message . test message . test message . test message . ");
-
         tvStatusMessage.setEms(12);
         tvStatusMessage.setSingleLine(true);
         tvStatusMessage.setSelected(true);
         tvStatusMessage.setEllipsize(TextUtils.TruncateAt.END);
-        if (tvStatusMessage.length() >= 0) {
+        if (tvStatusMessage.length() > 0) {
             tvStatusMessage.setOnClickListener(view -> {
                 DialogFragment dialogFragment = new MessageDisplayFragment();
                 Bundle args = new Bundle();

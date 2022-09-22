@@ -76,9 +76,9 @@ public class SignupActivity extends AppCompatActivity {
     private Validator validator;
     private Validation validation;
 
-    private FirebaseUser firebaseUser;
-    private DatabaseReference databaseReference;
-    private StorageReference storageReference;
+    private FirebaseUser currentUser;
+    private DatabaseReference databaseRootRef;
+    private StorageReference storageRootRef;
     private Uri localFileUri;
     private FirebaseAuth firebaseAuth;
     private SharedPreferences pref;
@@ -96,8 +96,8 @@ public class SignupActivity extends AppCompatActivity {
         ivProfile = findViewById(R.id.iv_profile);
         progressBar = findViewById(R.id.progress_bar);
         firebaseAuth = FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
-        databaseReference = FirebaseDatabase.getInstance().getReference();
+        storageRootRef = FirebaseStorage.getInstance().getReference();
+        databaseRootRef = FirebaseDatabase.getInstance().getReference();
         pref = getPreferences(Context.MODE_PRIVATE);
         validator = new Validator(this);
         validation = new Validation(validator);
@@ -140,7 +140,7 @@ public class SignupActivity extends AppCompatActivity {
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(name)
                 .build();
-        firebaseUser.updateProfile(profileUpdates)
+        currentUser.updateProfile(profileUpdates)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, getString(R.string.user_profile_updated));
@@ -152,9 +152,9 @@ public class SignupActivity extends AppCompatActivity {
 
 
     private void updatePhoto() {
-        String photo = firebaseUser.getUid() + EXT_JPG;
+        String photo = currentUser.getUid() + EXT_JPG;
         StorageReference fileRef =
-                storageReference.child(IMAGES_FOLDER).child(PHOTO).child(photo);
+                storageRootRef.child(IMAGES_FOLDER).child(PHOTO).child(photo);
         UploadTask uploadTask = fileRef.putFile(localFileUri);
         Task<Uri> urlTask = uploadTask.continueWithTask((Continuation<UploadTask.TaskSnapshot, Task<Uri>>) task -> {
             if (!task.isSuccessful()) {
@@ -169,14 +169,14 @@ public class SignupActivity extends AppCompatActivity {
                 editor.commit();
                 UserProfileChangeRequest profileUpdates =
                         new UserProfileChangeRequest.Builder().setPhotoUri(uri).build();
-                firebaseUser.updateProfile(profileUpdates).addOnCompleteListener(task1 -> {
+                currentUser.updateProfile(profileUpdates).addOnCompleteListener(task1 -> {
                 });
             }
         });
     }
 
     private void writeNewUser() {
-        String userId = firebaseUser.getUid();
+        String userId = currentUser.getUid();
         String photo = pref.getString(PHOTO_URI_KEY, "");
         SharedPreferences.Editor editor = pref.edit();
         editor.remove(PHOTO_URI_KEY);
@@ -184,7 +184,7 @@ public class SignupActivity extends AppCompatActivity {
         String statusMessage = "";
         String backgroundPhoto = "";
         UserModel userModel = new UserModel(name, email, statusMessage, photo, backgroundPhoto);
-        databaseReference.child(USERS).child(userId).setValue(userModel).addOnCompleteListener(task -> {
+        databaseRootRef.child(USERS).child(userId).setValue(userModel).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast toast = Toast.makeText(SignupActivity.this, R.string.signup_successfully,
                         Toast.LENGTH_SHORT);
@@ -205,7 +205,7 @@ public class SignupActivity extends AppCompatActivity {
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
                 if (task.isSuccessful()) {
                     Log.d(TAG, getString(R.string.create_user_success));
-                    firebaseUser = firebaseAuth.getCurrentUser();
+                    currentUser = firebaseAuth.getCurrentUser();
                     if (localFileUri != null) {
                         updatePhoto();
                     }

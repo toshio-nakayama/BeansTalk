@@ -60,4 +60,15 @@ public class UserModel {
     public void setBackgroundPhoto(String backgroundPhoto) {
         this.backgroundPhoto = backgroundPhoto;
     }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", statusMessage='" + statusMessage + '\'' +
+                ", photo='" + photo + '\'' +
+                ", backgroundPhoto='" + backgroundPhoto + '\'' +
+                '}';
+    }
 }

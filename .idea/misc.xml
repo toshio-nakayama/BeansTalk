@@ -52,7 +52,7 @@
         <entry key="app/src/main/res/layout/fragment_friend.xml" value="0.10729166666666666" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.10729166666666666" />
         <entry key="app/src/main/res/layout/fragment_message_display.xml" value="0.2453125" />
-        <entry key="app/src/main/res/layout/fragment_message_edit.xml" value="0.192481884057971" />
+        <entry key="app/src/main/res/layout/fragment_message_edit.xml" value="0.125" />
         <entry key="app/src/main/res/layout/fragment_my_color.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/fragment_profile_edit.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/fragment_profile_home.xml" value="0.165" />

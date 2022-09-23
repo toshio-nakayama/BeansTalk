@@ -2,11 +2,13 @@ package com.gmail.h1990.toshio.beanstalk.changecolor;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,12 +18,20 @@ import java.util.List;
 
 public class MyColorAdapter extends RecyclerView.Adapter<MyColorAdapter.ColorViewHolder> {
 
+    private ColorBtnClickListener callback;
+
+    public interface ColorBtnClickListener {
+        public void onColorBtnClick(@ColorInt int argb);
+    }
+
     private List<ColorModel> colorModelList;
     private Context context;
 
-    public MyColorAdapter(List<ColorModel> colorModelList, Context context) {
+    public MyColorAdapter(List<ColorModel> colorModelList, Context context,
+                          ColorBtnClickListener callback) {
         this.colorModelList = colorModelList;
         this.context = context;
+        this.callback = callback;
     }
 
     @NonNull
@@ -35,9 +45,14 @@ public class MyColorAdapter extends RecyclerView.Adapter<MyColorAdapter.ColorVie
     @Override
     public void onBindViewHolder(@NonNull ColorViewHolder holder, int position) {
         ColorModel colorModel = colorModelList.get(position);
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(colorModel.getStyleRes(), typedValue, true);
+        int styleRes = typedValue.data;
+        int argb = context.getColor(colorModel.getArgb());
         GradientDrawable bgShape = (GradientDrawable) holder.ibColor.getBackground();
-        bgShape.setColor(colorModel.getArgb());
+        bgShape.setColor(argb);
         holder.ibColor.setOnClickListener(view -> {
+            callback.onColorBtnClick(colorModel.getStyleRes());
         });
     }
 

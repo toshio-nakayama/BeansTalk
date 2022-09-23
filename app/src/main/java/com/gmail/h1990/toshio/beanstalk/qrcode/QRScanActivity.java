@@ -1,9 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.qrcode;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.KeyEvent;
@@ -11,7 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
 import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
@@ -24,6 +25,7 @@ public class QRScanActivity extends AppCompatActivity implements QRGenerateFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorUtil.setTheme(this);
         setContentView(R.layout.activity_qrscan);
 
         ibClose = findViewById(R.id.ib_close);

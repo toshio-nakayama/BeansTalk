@@ -50,7 +50,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
         StorageReference storageReference =
                 FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(friendListModel.getPhotoName());
         storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
-            GlideUtils.setPhoto(context, uri, holder.ivProfile);
+            GlideUtils.setPhoto(context, uri, R.drawable.default_profile, holder.ivProfile);
         });
 
         holder.llFriendList.setOnClickListener(v -> {

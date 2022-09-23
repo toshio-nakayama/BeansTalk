@@ -71,7 +71,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             StorageReference mRef =
                     FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(photoName);
             mRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                GlideUtils.setPhoto(context, uri, holder.ivProfile);
+                GlideUtils.setPhoto(context, uri, R.drawable.default_profile, holder.ivProfile);
             });
             holder.tvReceivedMessage.setOnLongClickListener(view -> {
                 try {

@@ -17,6 +17,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.gmail.h1990.toshio.beanstalk.MainActivity;
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
 import com.gmail.h1990.toshio.beanstalk.changecolor.MyColorFragment;
 import com.gmail.h1990.toshio.beanstalk.signup.SignupActivity;
 import com.gmail.h1990.toshio.beanstalk.util.ConnectivityCheck;
@@ -26,7 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements MyColorFragment.PreferenceSavedListener {
     @NotEmpty
     private EditText etEmail;
 
@@ -40,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorUtil.setTheme(this);
         setContentView(R.layout.activity_login);
 
         etEmail = findViewById(R.id.et_email);
@@ -103,5 +105,9 @@ public class LoginActivity extends AppCompatActivity {
         dialogFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 
-
+    @Override
+    public void onPreferenceSaved() {
+        finish();
+        startActivity(getIntent());
+    }
 }

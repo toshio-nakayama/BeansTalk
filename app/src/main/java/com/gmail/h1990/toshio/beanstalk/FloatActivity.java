@@ -1,13 +1,14 @@
 package com.gmail.h1990.toshio.beanstalk;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
 import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
 
 public class FloatActivity extends AppCompatActivity {
@@ -17,6 +18,7 @@ public class FloatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorUtil.setTheme(this);
         setContentView(R.layout.activity_float);
 
         ivFloat = findViewById(R.id.iv_float);

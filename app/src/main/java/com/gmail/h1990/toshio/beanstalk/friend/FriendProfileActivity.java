@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
 import com.gmail.h1990.toshio.beanstalk.talk.TalkActivity;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,6 +42,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorUtil.setTheme(this);
         setContentView(R.layout.activity_friend_profile);
 
         acceptData();
@@ -90,9 +92,10 @@ public class FriendProfileActivity extends AppCompatActivity {
         tvStatusMessage.setText("");
         StorageReference storageReference =
                 FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(friendUserPhotoName);
-        storageReference.getDownloadUrl().addOnSuccessListener(uri ->
-                GlideUtils.setPhoto(this, uri,
-                        ivProfile));
+        storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
+            GlideUtils.setPhoto(this, uri, R.drawable.default_profile, ivProfile);
+        });
+
     }
 
     @Override

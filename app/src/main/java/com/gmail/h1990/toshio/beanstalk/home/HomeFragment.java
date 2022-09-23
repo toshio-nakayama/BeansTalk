@@ -6,16 +6,6 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.MenuHost;
-import androidx.core.view.MenuProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +16,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.navigation.Navigation;
 
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.addfriend.AddFriendActivity;
@@ -79,7 +78,7 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
             Navigation.findNavController(view).navigate(R.id.friendFragment);
         });
         setFriendsCount();
-        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), ivProfile);
+        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile, ivProfile);
         tvName.setText(currentUser.getDisplayName());
         ivProfile.setOnTouchListener(HomeFragment.this);
         MenuHost menuHost = requireActivity();

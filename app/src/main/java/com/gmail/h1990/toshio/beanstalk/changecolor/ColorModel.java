@@ -1,21 +1,34 @@
 package com.gmail.h1990.toshio.beanstalk.changecolor;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.StyleRes;
 
 public class ColorModel {
     @ColorInt
     private int argb;
 
-    public ColorModel(@ColorInt int argb) {
+    @StyleRes
+    private int styleRes;
+
+    public ColorModel(int argb, int styleRes) {
         this.argb = argb;
+        this.styleRes = styleRes;
     }
 
     public int getArgb() {
         return argb;
     }
 
-    public void setArgb(@ColorInt int argb) {
+    public void setArgb(int argb) {
         this.argb = argb;
+    }
+
+    public int getStyleRes() {
+        return styleRes;
+    }
+
+    public void setStyleRes(int styleRes) {
+        this.styleRes = styleRes;
     }
 }
 

@@ -128,10 +128,10 @@ public class MessageEditFragment extends DialogFragment {
                 if (name.length() < MIN_LENGTH_NAME) {
                     etInput.setError(getString(R.string.less_characters_warning,
                             String.valueOf(MIN_LENGTH_NAME)));
-                    btSave.setVisibility(View.GONE);
+                    btSave.setEnabled(false);
                 } else {
                     etInput.setError(null);
-                    btSave.setVisibility(View.VISIBLE);
+                    btSave.setEnabled(true);
                 }
             }
         });

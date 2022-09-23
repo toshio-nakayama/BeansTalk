@@ -1,6 +1,9 @@
 package com.gmail.h1990.toshio.beanstalk.profile;
 
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.STATUS_MESSAGE;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.BACKGROUND_PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.content.Context;
@@ -44,8 +47,10 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
     private TextView tvStatusMessage;
 
     private ImageView ivProfile;
+    private ImageView ivBackgroundPhoto;
     private FirebaseUser currentUser;
     private DatabaseReference databaseReferenceUser;
+    private StorageReference storageRootRef;
     private Button btLogout;
 
     private Uri localFileUri;
@@ -75,6 +80,7 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
         databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(USERS);
+        storageRootRef = FirebaseStorage.getInstance().getReference();
     }
 
     @Override
@@ -135,6 +141,7 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
         tvName = view.findViewById(R.id.tv_name);
         tvStatusMessage = view.findViewById(R.id.tv_status_message);
         ivProfile = view.findViewById(R.id.iv_profile);
+        ivBackgroundPhoto = view.findViewById(R.id.iv_background_photo);
         btLogout = view.findViewById(R.id.bt_logout);
     }
 
@@ -143,15 +150,26 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 UserModel userModel = snapshot.getValue(UserModel.class);
-                GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), ivProfile);
+                GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile, ivProfile);
                 tvName.setText(currentUser.getDisplayName());
                 tvStatusMessage.setText(userModel.getStatusMessage());
+                setBackground();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
+        });
+    }
+
+    private void setBackground() {
+        String photo = currentUser.getUid() + EXT_JPG;
+        StorageReference fileRef =
+                storageRootRef.child(IMAGES_FOLDER).child(BACKGROUND_PHOTO).child(photo);
+        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            GlideUtils.setPhoto(getContext(), uri, R.drawable.default_background, ivBackgroundPhoto);
+        }).addOnFailureListener(e -> {
         });
     }
 }

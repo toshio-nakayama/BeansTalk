@@ -6,6 +6,7 @@ import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.CONTENTS;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.EDIT_TYPE;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.REQUEST_KEY;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.BACKGROUND_PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
@@ -130,14 +131,26 @@ public class ProfileEditFragment extends Fragment {
         });
     }
 
+    private void setBackground() {
+        String photo = currentUser.getUid() + EXT_JPG;
+        StorageReference fileRef =
+                storageRootRef.child(IMAGES_FOLDER).child(BACKGROUND_PHOTO).child(photo);
+        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            GlideUtils.setPhoto(getContext(), uri, R.drawable.default_background, ivBackgroundPhoto);
+        }).addOnFailureListener(e -> {
+        });
+    }
+
+
     private void setProfile() {
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 UserModel userModel = snapshot.getValue(UserModel.class);
-                GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), ivProfile);
+                GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile, ivProfile);
                 tvName.setText(currentUser.getDisplayName());
                 tvStatusMessage.setText(userModel.getStatusMessage());
+                setBackground();
             }
 
             @Override
@@ -180,6 +193,7 @@ public class ProfileEditFragment extends Fragment {
                         if (result.getResultCode() == RESULT_OK) {
                             Uri localFileUri = result.getData().getData();
                             ivBackgroundPhoto.setImageURI(localFileUri);
+                            updateBackgroundPhoto(localFileUri);
                         }
                     });
 
@@ -202,6 +216,25 @@ public class ProfileEditFragment extends Fragment {
                         currentUserRef.child(PHOTO).setValue(uri.getPath()).addOnCompleteListener(task2 -> {
                         });
                     }
+                });
+            }
+        });
+    }
+
+    private void updateBackgroundPhoto(Uri photoUri) {
+        String photo = currentUser.getUid() + EXT_JPG;
+        StorageReference fileRef = storageRootRef.child(IMAGES_FOLDER).child(BACKGROUND_PHOTO).child(photo);
+        UploadTask uploadTask = fileRef.putFile(photoUri);
+        Task<Uri> urlTask = uploadTask.continueWithTask((Continuation<UploadTask.TaskSnapshot, Task<Uri>>) task -> {
+            if (!task.isSuccessful()) {
+                throw Objects.requireNonNull(task.getException());
+            }
+            return fileRef.getDownloadUrl();
+        }).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Uri uri = task.getResult();
+                currentUserRef.child(BACKGROUND_PHOTO).setValue(uri.getPath()).addOnCompleteListener(task1 -> {
+
                 });
             }
         });

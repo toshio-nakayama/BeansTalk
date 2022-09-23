@@ -50,7 +50,7 @@ public class TalkListAdapter extends RecyclerView.Adapter<TalkListAdapter.TalkLi
 
         StorageReference storageReference =
                 FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(talkListModel.getPhotoName());
-        storageReference.getDownloadUrl().addOnSuccessListener(uri -> GlideUtils.setPhoto(context, uri, holder.ivProfile));
+        storageReference.getDownloadUrl().addOnSuccessListener(uri -> GlideUtils.setPhoto(context, uri, R.drawable.default_profile, holder.ivProfile));
 
         holder.llTalkList.setOnClickListener(v -> {
             Intent intent = new Intent(context, TalkActivity.class);

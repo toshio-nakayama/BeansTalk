@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
 import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment;
 import com.gmail.h1990.toshio.beanstalk.util.ConnectivityCheck;
@@ -69,6 +70,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorUtil.setTheme(this);
         setContentView(R.layout.activity_talk);
 
         ImageView ivSend = findViewById(R.id.iv_send);

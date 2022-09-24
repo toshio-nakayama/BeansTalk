@@ -60,7 +60,7 @@ public class ReactionFragment extends DialogFragment {
     public List<ReactionModel> generateReactionList() {
         List<ReactionModel> reactionModels = new ArrayList<>();
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.birthday, null)));
+                R.drawable.celebrate, null)));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
                 R.drawable.crying, null)));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),

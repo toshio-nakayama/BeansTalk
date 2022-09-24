@@ -9,16 +9,18 @@ public class MessageModel {
     private String messageId;
     private long messageTime;
     private String messageType;
+    private int reactionStatus;
 
     public MessageModel() {
     }
 
-    public MessageModel(String message, String messageFrom, String messageId, long messageTime, String messageType) {
+    public MessageModel(String message, String messageFrom, String messageId, long messageTime, String messageType, int reactionStatus) {
         this.message = message;
         this.messageFrom = messageFrom;
         this.messageId = messageId;
         this.messageTime = messageTime;
         this.messageType = messageType;
+        this.reactionStatus = reactionStatus;
     }
 
     public String getMessage() {
@@ -59,6 +61,14 @@ public class MessageModel {
 
     public void setMessageType(String messageType) {
         this.messageType = messageType;
+    }
+
+    public int getReactionStatus() {
+        return reactionStatus;
+    }
+
+    public void setReactionStatus(int reactionStatus) {
+        this.reactionStatus = reactionStatus;
     }
 }
 

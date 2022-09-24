@@ -15,6 +15,12 @@ import java.util.List;
 
 public class ReactionAdapter extends RecyclerView.Adapter<ReactionAdapter.ReactionViewHolder> {
 
+    private ReactionSelectedListener callback;
+
+    public interface ReactionSelectedListener {
+        public void onReactionSelected();
+    }
+
     private List<ReactionModel> reactionModels;
     private Context context;
 

@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -25,8 +24,6 @@ import com.gmail.h1990.toshio.beanstalk.MainActivity;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
 import com.gmail.h1990.toshio.beanstalk.common.Extras;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -68,24 +65,21 @@ public class AddFriendActivity extends AppCompatActivity {
 
 
     private void setProfile() {
-        databaseReferenceUser.child(userId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DataSnapshot snapshot = task.getResult();
-                    if (snapshot.exists()) {
-                        String photoName = userId + EXT_JPG;
-                        final StorageReference fileReference = FirebaseStorage.getInstance().getReference()
-                                .child(IMAGES_FOLDER).child(PHOTO).child(photoName);
-                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            tvName.setText(snapshot.child(NAME).getValue().toString());
-                            Glide.with(AddFriendActivity.this)
-                                    .load(uri)
-                                    .placeholder(R.drawable.default_profile)
-                                    .error(R.drawable.default_profile)
-                                    .into(ivProfile);
-                        });
-                    }
+        databaseReferenceUser.child(userId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot snapshot = task.getResult();
+                if (snapshot.exists()) {
+                    String photoName = userId + EXT_JPG;
+                    final StorageReference fileRef = FirebaseStorage.getInstance().getReference()
+                            .child(IMAGES_FOLDER).child(PHOTO).child(photoName);
+                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        tvName.setText(snapshot.child(NAME).getValue().toString());
+                        Glide.with(AddFriendActivity.this)
+                                .load(uri)
+                                .placeholder(R.drawable.default_profile)
+                                .error(R.drawable.default_profile)
+                                .into(ivProfile);
+                    });
                 }
             }
         });
@@ -93,21 +87,15 @@ public class AddFriendActivity extends AppCompatActivity {
 
     public void onAddBtnClick(View v) {
         databaseReferenceTalk.child(currentUser.getUid()).child(userId).child(TIME_STAMP)
-                .setValue(ServerValue.TIMESTAMP).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            databaseReferenceTalk.child(userId).child(currentUser.getUid()).child(TIME_STAMP)
-                                    .setValue(ServerValue.TIMESTAMP).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                startActivity(new Intent(AddFriendActivity.this,
-                                                        MainActivity.class));
-                                            }
-                                        }
-                                    });
-                        }
+                .setValue(ServerValue.TIMESTAMP).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        databaseReferenceTalk.child(userId).child(currentUser.getUid()).child(TIME_STAMP)
+                                .setValue(ServerValue.TIMESTAMP).addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        startActivity(new Intent(AddFriendActivity.this,
+                                                MainActivity.class));
+                                    }
+                                });
                     }
                 });
     }

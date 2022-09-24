@@ -11,6 +11,7 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_FROM;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_ID;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_TIME;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_TYPE;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.REACTION_STATUS;
 import static com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment.DIALOG_TAG;
 
 import android.os.Bundle;
@@ -140,6 +141,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                 messageMap.put(MESSAGE_TYPE, msgType);
                 messageMap.put(MESSAGE_FROM, currentUserId);
                 messageMap.put(MESSAGE_TIME, ServerValue.TIMESTAMP);
+                messageMap.put(REACTION_STATUS, 0);
                 String currentUserReference = MESSAGES + "/" + currentUserId + "/" + talkUserId;
                 String talkUserReference = MESSAGES + "/" + talkUserId + "/" + currentUserId;
                 HashMap messageUserMap = new HashMap();

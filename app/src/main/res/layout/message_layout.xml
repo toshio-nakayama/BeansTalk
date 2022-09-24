@@ -40,6 +40,55 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_received_reaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@id/ll_sent"
+        app:layout_constraintTop_toBottomOf="@id/ll_sent">
+
+        <ImageView
+            android:id="@+id/iv_received_celebrate"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/celebrate" />
+
+        <ImageView
+            android:id="@+id/iv_received_crying"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/crying" />
+
+        <ImageView
+            android:id="@+id/iv_received_furious"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/furious" />
+
+        <ImageView
+            android:id="@+id/iv_received_pleading"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/pleading" />
+
+        <ImageView
+            android:id="@+id/iv_received_wink"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/wink" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/ll_received"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,7 +97,7 @@
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ll_sent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_received_reaction"
         tools:visibility="visible">
 
         <com.mikhaellopez.circularimageview.CircularImageView
@@ -77,5 +126,54 @@
             android:layout_marginEnd="4dp"
             android:textSize="12sp"
             tools:text="00:00" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_sent_reaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@id/ll_received"
+        app:layout_constraintTop_toBottomOf="@+id/ll_received">
+
+        <ImageView
+            android:id="@+id/iv_sent_celebrate"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/celebrate" />
+
+        <ImageView
+            android:id="@+id/iv_sent_crying"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/crying" />
+
+        <ImageView
+            android:id="@+id/iv_sent_furious"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/furious" />
+
+        <ImageView
+            android:id="@+id/iv_sent_pleading"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/pleading" />
+
+        <ImageView
+            android:id="@+id/iv_sent_wink"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:srcCompat="@drawable/wink" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

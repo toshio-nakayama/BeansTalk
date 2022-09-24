@@ -26,9 +26,9 @@
     <string name="input_item">入力項目</string>
     <string name="profile">プロフィール</string>
     <string name="not_set">未設定</string>
-    <string name="qr_generate_explanation">QRコードで友達を追加しましょう。</string>
+    <string name="qr_generate_explanation">QRコードで友達を追加しましょう</string>
     <string name="my_qrcode">マイQRコード</string>
-    <string name="qr_reader_explanation"><![CDATA[>QRコードをスキャンして友達を追加できます。]]></string>
+    <string name="qr_reader_explanation">QRコードをスキャンして友達を追加できます</string>
     <string name="enter_message">メッセージを入力</string>
     <string name="failed_to_send_message">Failed to send message</string>
     <string name="message_sent_successfully">Message sent successfully</string>

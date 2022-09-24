@@ -8,16 +8,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.databinding.MessageLayoutBinding;
 import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
+import com.gmail.h1990.toshio.beanstalk.reaction.ReactionState;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
@@ -43,8 +41,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.message_layout, parent, false);
-        return new MessageViewHolder(view);
+        MessageLayoutBinding binding =
+                MessageLayoutBinding.inflate(LayoutInflater.from(parent.getContext()), parent,
+                        false);
+        MessageViewHolder holder = new MessageViewHolder(binding);
+        return holder;
     }
 
     @Override
@@ -58,22 +59,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         String[] splitString = dateTime.split(" ");
         String messageTime = splitString[1];
         if (fromUserId.equals(currentUserId)) {
-            holder.llSent.setVisibility(View.VISIBLE);
-            holder.llReceived.setVisibility(View.GONE);
-            holder.tvSentMessage.setText(messageModel.getMessage());
-            holder.tvSentMessageTime.setText(messageTime);
+            setSentMessage(holder, messageModel.getMessage(), messageTime);
+            setReceivedReaction(holder, messageModel.getReactionStatus());
         } else {
-            holder.llReceived.setVisibility(View.VISIBLE);
-            holder.llSent.setVisibility(View.GONE);
-            holder.tvReceivedMessage.setText(messageModel.getMessage());
-            holder.tvReceivedMessageTime.setText(messageTime);
+            setReceivedMessage(holder, messageModel.getMessage(), messageTime);
+            setSentReaction(holder, messageModel.getReactionStatus());
             String photoName = messageModel.getMessageFrom() + EXT_JPG;
-            StorageReference mRef =
-                    FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(photoName);
-            mRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                GlideUtils.setPhoto(context, uri, R.drawable.default_profile, holder.ivProfile);
-            });
-            holder.tvReceivedMessage.setOnLongClickListener(view -> {
+            setPhoto(holder, photoName);
+            holder.binding.tvReceivedMessage.setOnLongClickListener(view -> {
                 try {
                     mAdapterCallback.onMethodCallback();
                 } catch (ClassCastException exception) {
@@ -84,6 +77,70 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         }
     }
 
+    private void setPhoto(MessageViewHolder holder, String photoName) {
+        StorageReference mRef =
+                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(photoName);
+        mRef.getDownloadUrl().addOnSuccessListener(uri -> {
+            GlideUtils.setPhoto(context, uri, R.drawable.default_profile, holder.binding.ivProfile);
+        });
+    }
+
+    private void setSentMessage(MessageViewHolder holder, String message, String messageTime) {
+        holder.binding.llSent.setVisibility(View.VISIBLE);
+        holder.binding.llReceived.setVisibility(View.GONE);
+        holder.binding.llReceivedReaction.setVisibility(View.VISIBLE);
+        holder.binding.llSentReaction.setVisibility(View.GONE);
+        holder.binding.tvSentMessage.setText(message);
+        holder.binding.tvSentMessageTime.setText(messageTime);
+    }
+
+
+    private void setReceivedMessage(MessageViewHolder holder, String message, String messageTime) {
+        holder.binding.llReceived.setVisibility(View.VISIBLE);
+        holder.binding.llSent.setVisibility(View.GONE);
+        holder.binding.llSentReaction.setVisibility(View.VISIBLE);
+        holder.binding.llReceivedReaction.setVisibility(View.GONE);
+        holder.binding.tvReceivedMessage.setText(message);
+        holder.binding.tvReceivedMessageTime.setText(messageTime);
+    }
+
+    private void setSentReaction(MessageViewHolder holder, int reactionStatus) {
+        if (ReactionState.STATE_CELEBRATE.containsFlag(reactionStatus)) {
+            holder.binding.ivSentCelebrate.setVisibility(View.VISIBLE);
+        }
+        if (ReactionState.STATE_CRYING.containsFlag(reactionStatus)) {
+            holder.binding.ivSentCrying.setVisibility(View.VISIBLE);
+        }
+        if (ReactionState.STATE_FURIOUS.containsFlag(reactionStatus)) {
+            holder.binding.ivSentFurious.setVisibility(View.VISIBLE);
+        }
+        if (ReactionState.STATE_PLEADING.containsFlag(reactionStatus)) {
+            holder.binding.ivSentPleading.setVisibility(View.VISIBLE);
+        }
+        if (ReactionState.STATE_WINK.containsFlag(reactionStatus)) {
+            holder.binding.ivSentWink.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setReceivedReaction(MessageViewHolder holder, int reactionStatus) {
+        if (ReactionState.STATE_CELEBRATE.containsFlag(reactionStatus)) {
+            holder.binding.ivReceivedCelebrate.setVisibility(View.VISIBLE);
+        }
+        if (ReactionState.STATE_CRYING.containsFlag(reactionStatus)) {
+            holder.binding.ivReceivedCrying.setVisibility(View.VISIBLE);
+        }
+        if (ReactionState.STATE_FURIOUS.containsFlag(reactionStatus)) {
+            holder.binding.ivReceivedFurious.setVisibility(View.VISIBLE);
+        }
+        if (ReactionState.STATE_PLEADING.containsFlag(reactionStatus)) {
+            holder.binding.ivReceivedPleading.setVisibility(View.VISIBLE);
+        }
+        if (ReactionState.STATE_WINK.containsFlag(reactionStatus)) {
+            holder.binding.ivReceivedWink.setVisibility(View.VISIBLE);
+        }
+    }
+
+
     @Override
     public int getItemCount() {
         return messageModelList.size();
@@ -91,25 +148,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
-        private final LinearLayout llSent;
-        private final LinearLayout llReceived;
-        private final TextView tvSentMessage;
-        private final TextView tvSentMessageTime;
-        private final TextView tvReceivedMessage;
-        private final TextView tvReceivedMessageTime;
-        private final ImageView ivProfile;
-        private final ConstraintLayout clMessage;
+        private MessageLayoutBinding binding;
 
-        public MessageViewHolder(@NonNull View itemView) {
-            super(itemView);
-            llSent = itemView.findViewById(R.id.ll_sent);
-            llReceived = itemView.findViewById(R.id.ll_received);
-            tvSentMessage = itemView.findViewById(R.id.tv_sent_message);
-            tvSentMessageTime = itemView.findViewById(R.id.tv_sent_message_time);
-            tvReceivedMessage = itemView.findViewById(R.id.tv_received_message);
-            tvReceivedMessageTime = itemView.findViewById(R.id.tv_received_message_time);
-            ivProfile = itemView.findViewById(R.id.iv_profile);
-            clMessage = itemView.findViewById(R.id.cl_message);
+
+        public MessageViewHolder(@NonNull MessageLayoutBinding item) {
+            super(item.getRoot());
+            binding = item;
         }
     }
 

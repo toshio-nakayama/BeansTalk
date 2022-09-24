@@ -17,5 +17,6 @@ public class NodeNames {
     public static final String MESSAGE_TYPE = "messageType";
     public static final String MESSAGE_FROM = "messageFrom";
     public static final String MESSAGE_TIME = "messageTime";
+    public static final String REACTION_STATUS = "reactionStatus";
 
 }

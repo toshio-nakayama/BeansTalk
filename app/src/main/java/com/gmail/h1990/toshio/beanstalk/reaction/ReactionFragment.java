@@ -60,15 +60,15 @@ public class ReactionFragment extends DialogFragment {
     public List<ReactionModel> generateReactionList() {
         List<ReactionModel> reactionModels = new ArrayList<>();
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.celebrate, null)));
+                R.drawable.celebrate, null), ReactionState.STATE_CELEBRATE.getFlag()));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.crying, null)));
+                R.drawable.crying, null), ReactionState.STATE_CRYING.getFlag()));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.furious, null)));
+                R.drawable.furious, null), ReactionState.STATE_FURIOUS.getFlag()));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.pleading, null)));
+                R.drawable.pleading, null), ReactionState.STATE_PLEADING.getFlag()));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.wink, null)));
+                R.drawable.wink, null), ReactionState.STATE_WINK.getFlag()));
         return reactionModels;
     }
 }

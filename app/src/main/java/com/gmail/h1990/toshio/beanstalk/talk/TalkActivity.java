@@ -141,7 +141,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                 messageMap.put(MESSAGE_TYPE, msgType);
                 messageMap.put(MESSAGE_FROM, currentUserId);
                 messageMap.put(MESSAGE_TIME, ServerValue.TIMESTAMP);
-                messageMap.put(REACTION_STATUS, 0);
+                messageMap.put(REACTION_STATUS, 0b00000);
                 String currentUserReference = MESSAGES + "/" + currentUserId + "/" + talkUserId;
                 String talkUserReference = MESSAGES + "/" + talkUserId + "/" + currentUserId;
                 HashMap messageUserMap = new HashMap();

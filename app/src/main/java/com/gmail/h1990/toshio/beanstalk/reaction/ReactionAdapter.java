@@ -10,12 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.talk.TalkActivity;
 
 import java.util.List;
 
 public class ReactionAdapter extends RecyclerView.Adapter<ReactionAdapter.ReactionViewHolder> {
 
     private ReactionSelectedListener callback;
+    private String selectedMessageId;
 
     public interface ReactionSelectedListener {
         public void onReactionSelected();
@@ -24,9 +26,12 @@ public class ReactionAdapter extends RecyclerView.Adapter<ReactionAdapter.Reacti
     private List<ReactionModel> reactionModels;
     private Context context;
 
-    public ReactionAdapter(List<ReactionModel> reactionModels, Context context) {
+    public ReactionAdapter(List<ReactionModel> reactionModels, Context context,
+                           String selectedMessageId, ReactionSelectedListener callback) {
         this.reactionModels = reactionModels;
         this.context = context;
+        this.selectedMessageId = selectedMessageId;
+        this.callback = callback;
     }
 
     @NonNull
@@ -42,6 +47,8 @@ public class ReactionAdapter extends RecyclerView.Adapter<ReactionAdapter.Reacti
         ReactionModel reactionModel = reactionModels.get(position);
         holder.ibReaction.setBackground(reactionModel.getGraphics());
         holder.ibReaction.setOnClickListener(view -> {
+            ((TalkActivity) context).sendReaction(selectedMessageId, reactionModel.getReactionState());
+            callback.onReactionSelected();
         });
 
     }

@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ReactionFragment extends DialogFragment {
+public class ReactionFragment extends DialogFragment implements ReactionAdapter.ReactionSelectedListener {
     public static final String DIALOG_TAG = "dialog_reaction";
+    private String selectedMessageId;
 
     public ReactionFragment() {
     }
@@ -36,6 +37,7 @@ public class ReactionFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        selectedMessageId = getArguments().getString("messageId");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_reaction, null);
@@ -52,7 +54,7 @@ public class ReactionFragment extends DialogFragment {
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rvContainer.setLayoutManager(manager);
         RecyclerView.Adapter adapter = new ReactionAdapter(generateReactionList(),
-                requireActivity());
+                requireActivity(), selectedMessageId, this);
         rvContainer.setAdapter(adapter);
     }
 
@@ -60,15 +62,20 @@ public class ReactionFragment extends DialogFragment {
     public List<ReactionModel> generateReactionList() {
         List<ReactionModel> reactionModels = new ArrayList<>();
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.celebrate, null), ReactionState.STATE_CELEBRATE.getFlag()));
+                R.drawable.celebrate, null), ReactionState.STATE_CELEBRATE));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.crying, null), ReactionState.STATE_CRYING.getFlag()));
+                R.drawable.crying, null), ReactionState.STATE_CRYING));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.furious, null), ReactionState.STATE_FURIOUS.getFlag()));
+                R.drawable.furious, null), ReactionState.STATE_FURIOUS));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.pleading, null), ReactionState.STATE_PLEADING.getFlag()));
+                R.drawable.pleading, null), ReactionState.STATE_PLEADING));
         reactionModels.add(new ReactionModel(ResourcesCompat.getDrawable(getResources(),
-                R.drawable.wink, null), ReactionState.STATE_WINK.getFlag()));
+                R.drawable.wink, null), ReactionState.STATE_WINK));
         return reactionModels;
+    }
+
+    @Override
+    public void onReactionSelected() {
+        dismiss();
     }
 }

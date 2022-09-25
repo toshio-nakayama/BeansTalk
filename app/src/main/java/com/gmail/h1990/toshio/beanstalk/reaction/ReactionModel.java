@@ -4,11 +4,11 @@ import android.graphics.drawable.Drawable;
 
 public class ReactionModel {
     private Drawable graphics;
-    private int reactionStatus;
+    private ReactionState reactionState;
 
-    public ReactionModel(Drawable graphics, int reactionStatus) {
+    public ReactionModel(Drawable graphics, ReactionState reactionState) {
         this.graphics = graphics;
-        this.reactionStatus = reactionStatus;
+        this.reactionState = reactionState;
     }
 
     public Drawable getGraphics() {
@@ -19,11 +19,11 @@ public class ReactionModel {
         this.graphics = graphics;
     }
 
-    public int getReactionStatus() {
-        return reactionStatus;
+    public ReactionState getReactionState() {
+        return reactionState;
     }
 
-    public void setReactionStatus(int reactionStatus) {
-        this.reactionStatus = reactionStatus;
+    public void setReactionState(ReactionState reactionState) {
+        this.reactionState = reactionState;
     }
 }

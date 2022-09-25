@@ -6,15 +6,10 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,10 +27,8 @@ import java.util.Date;
 import java.util.List;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
-    private Context context;
-    private List<MessageModel> messageModelList;
-    private FirebaseAuth firebaseAuth;
-    private ActionMode actionMode;
+    private final Context context;
+    private final List<MessageModel> messageModelList;
     private ConstraintLayout selectedView;
 
     public MessagesAdapter(Context context, List<MessageModel> messageModelList) {
@@ -56,7 +49,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         MessageModel messageModel = messageModelList.get(position);
-        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
         String fromUserId = messageModel.getMessageFrom();
         String messageTime = strDateFormat(messageModel.getMessageTime(), "dd-MM-yyyy HH:mm");
@@ -71,16 +64,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             setSentReaction(holder, messageModel.getReactionStatus());
             setTag(holder, messageModel);
             holder.binding.tvReceivedMessage.setOnLongClickListener(view -> {
-                if (actionMode != null) {
-                    return false;
-                }
                 selectedView = holder.binding.clMessage;
-                actionMode = ((AppCompatActivity) context).startSupportActionMode(actionModeCallback);
-//                ((TalkActivity) context).showDialog();
+                String selectedMessageId = String.valueOf(selectedView.getTag(R.id.TAG_MESSAGE_ID));
+                ((TalkActivity) context).generateReactionDialog(selectedMessageId);
                 return true;
             });
         }
-
     }
 
     @Override
@@ -175,60 +164,5 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             binding = item;
         }
     }
-
-    public ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            MenuInflater inflater = actionMode.getMenuInflater();
-            inflater.inflate(R.menu.menu_reaction, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            String selectedMessageId = String.valueOf(selectedView.getTag(R.id.TAG_MESSAGE_ID));
-            String selectedMessage = String.valueOf(selectedView.getTag(R.id.TAG_MESSAGE));
-            String selectedMessageType = String.valueOf(selectedView.getTag(R.id.TAG_MESSAGE_TYPE));
-            System.out.println(selectedMessage + " : " + selectedMessageId + " : " + selectedMessageType);
-            switch (menuItem.getItemId()) {
-                case R.id.reaction_celebrate:
-                    ((TalkActivity) context).sendReaction(selectedMessageId,
-                            ReactionState.STATE_CELEBRATE);
-                    actionMode.finish();
-                    break;
-                case R.id.reaction_crying:
-                    ((TalkActivity) context).sendReaction(selectedMessageId,
-                            ReactionState.STATE_CRYING);
-                    actionMode.finish();
-                    break;
-                case R.id.reaction_furious:
-                    ((TalkActivity) context).sendReaction(selectedMessageId,
-                            ReactionState.STATE_FURIOUS);
-                    actionMode.finish();
-                    break;
-                case R.id.reaction_pleading:
-                    ((TalkActivity) context).sendReaction(selectedMessageId,
-                            ReactionState.STATE_PLEADING);
-                    actionMode.finish();
-                    break;
-                case R.id.reaction_wink:
-                    ((TalkActivity) context).sendReaction(selectedMessageId,
-                            ReactionState.STATE_WINK);
-                    actionMode.finish();
-                    break;
-            }
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode actionMode) {
-            actionMode = null;
-        }
-    };
 }
 

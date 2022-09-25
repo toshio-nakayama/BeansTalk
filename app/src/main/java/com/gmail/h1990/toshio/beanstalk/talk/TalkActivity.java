@@ -264,8 +264,11 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public void showDialog() {
+    public void generateReactionDialog(String selectedMessageId) {
         DialogFragment dialogFragment = new ReactionFragment();
+        Bundle args = new Bundle();
+        args.putString("messageId", selectedMessageId);
+        dialogFragment.setArguments(args);
         dialogFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 

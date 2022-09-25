@@ -14,6 +14,18 @@ public class MessageModel {
     public MessageModel() {
     }
 
+    @Override
+    public String toString() {
+        return "MessageModel{" +
+                "message='" + message + '\'' +
+                ", messageFrom='" + messageFrom + '\'' +
+                ", messageId='" + messageId + '\'' +
+                ", messageTime=" + messageTime +
+                ", messageType='" + messageType + '\'' +
+                ", reactionStatus=" + reactionStatus +
+                '}';
+    }
+
     public MessageModel(String message, String messageFrom, String messageId, long messageTime, String messageType, int reactionStatus) {
         this.message = message;
         this.messageFrom = messageFrom;

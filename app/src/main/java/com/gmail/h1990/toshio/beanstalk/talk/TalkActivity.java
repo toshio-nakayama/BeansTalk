@@ -19,8 +19,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,13 +28,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
+import com.gmail.h1990.toshio.beanstalk.databinding.ActivityTalkBinding;
 import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment;
+import com.gmail.h1990.toshio.beanstalk.reaction.ReactionState;
 import com.gmail.h1990.toshio.beanstalk.util.ConnectivityCheck;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,37 +51,61 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class TalkActivity extends AppCompatActivity implements View.OnClickListener, MessagesAdapter.AdapterCallback {
+public class TalkActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private EditText etMessage;
     private DatabaseReference rootReference;
     private String currentUserId, talkUserId;
     private Validation validation;
-    private RecyclerView rvMessages;
-    private SwipeRefreshLayout srlMessages;
     private MessagesAdapter messagesAdapter;
     private List<MessageModel> messageList;
     private int currentPage = 1;
     private static final int RECORD_PER_PAGE = 30;
     private ChildEventListener childEventListener;
     private String talkUserName;
+    private String talkUserPhotoName;
+    private ActivityTalkBinding binding;
+    private Validator validator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ColorUtil.setTheme(this);
-        setContentView(R.layout.activity_talk);
+        binding = ActivityTalkBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        ImageView ivSend = findViewById(R.id.iv_send);
-        etMessage = findViewById(R.id.et_message);
-        rvMessages = findViewById(R.id.rv_messages);
-        srlMessages = findViewById(R.id.srl_messages);
+        setupFirebase();
+        acceptData();
+        setupValidation();
+        setupToolBar(talkUserName);
+
+        binding.ivSend.setOnClickListener(this);
+        messageList = new ArrayList<>();
+        messagesAdapter = new MessagesAdapter(this, messageList);
+        binding.rvMessages.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvMessages.setAdapter(messagesAdapter);
+        loadMessages();
+        binding.rvMessages.scrollToPosition(messageList.size() - 1);
+        binding.srlMessages.setOnRefreshListener(() -> {
+            currentPage++;
+            loadMessages();
+        });
+
+    }
+
+    private void setupValidation() {
+        validator = new Validator(this);
+        validation = new Validation(validator);
+        validator.setValidationListener(validation);
+    }
+
+    private void setupFirebase() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         rootReference = FirebaseDatabase.getInstance().getReference();
         currentUserId = firebaseAuth.getCurrentUser().getUid();
-        Validator validator = new Validator(this);
-        validation = new Validation(validator);
-        validator.setValidationListener(validation);
+    }
+
+    private void acceptData() {
         if (getIntent().hasExtra(USER_KEY)) {
             talkUserId = getIntent().getStringExtra(USER_KEY);
         }
@@ -91,20 +113,8 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
             talkUserName = getIntent().getStringExtra(USER_NAME);
         }
         if (getIntent().hasExtra(PHOTO_NAME)) {
-            String talkUserPhotoName = getIntent().getStringExtra(PHOTO_NAME);
+            talkUserPhotoName = getIntent().getStringExtra(PHOTO_NAME);
         }
-        ivSend.setOnClickListener(this);
-        messageList = new ArrayList<>();
-        messagesAdapter = new MessagesAdapter(this, messageList);
-        rvMessages.setLayoutManager(new LinearLayoutManager(this));
-        rvMessages.setAdapter(messagesAdapter);
-        loadMessages();
-        rvMessages.scrollToPosition(messageList.size() - 1);
-        srlMessages.setOnRefreshListener(() -> {
-            currentPage++;
-            loadMessages();
-        });
-        setupToolBar(talkUserName);
     }
 
     private void setupToolBar(String userName) {
@@ -120,6 +130,12 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        validator = null;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         switch (itemId) {
@@ -130,6 +146,26 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_send:
+                if (ConnectivityCheck.connectionAvailable(this)) {
+                    DatabaseReference userMessagePush =
+                            rootReference.child(MESSAGES).child(currentUserId).child(talkUserId).push();
+                    String pushId = userMessagePush.getKey();
+                    sendMessage(validation.trimAndNormalize(binding.etMessage.getText().toString()),
+                            MESSAGE_TYPE_TEXT, pushId);
+                } else {
+                    Toast toast = Toast.makeText(this, R.string.offline, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                }
+
+                break;
+        }
     }
 
     private void sendMessage(String msg, String msgType, String pushId) {
@@ -147,15 +183,12 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                 HashMap messageUserMap = new HashMap();
                 messageUserMap.put(currentUserReference + "/" + pushId, messageMap);
                 messageUserMap.put(talkUserReference + "/" + pushId, messageMap);
-                etMessage.getEditableText().clear();
-                rootReference.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                        if (error != null) {
-                            Log.e(TAG, getString(R.string.failed_to_send_message) + error.getMessage());
-                        } else {
-                            Log.d(TAG, getString(R.string.message_sent_successfully));
-                        }
+                binding.etMessage.getEditableText().clear();
+                rootReference.updateChildren(messageUserMap, (error, ref) -> {
+                    if (error != null) {
+                        Log.e(TAG, getString(R.string.failed_to_send_message) + error.getMessage());
+                    } else {
+                        Log.d(TAG, getString(R.string.message_sent_successfully));
                     }
                 });
             }
@@ -177,14 +210,12 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                 MessageModel messageModel = snapshot.getValue(MessageModel.class);
                 messageList.add(messageModel);
                 messagesAdapter.notifyDataSetChanged();
-                rvMessages.scrollToPosition(messageList.size() - 1);
-                srlMessages.setRefreshing(false);
-
+                binding.rvMessages.scrollToPosition(messageList.size() - 1);
+                binding.srlMessages.setRefreshing(false);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
             }
 
             @Override
@@ -199,39 +230,44 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                srlMessages.setRefreshing(false);
+                binding.srlMessages.setRefreshing(false);
             }
         };
         messageQuery.addChildEventListener(childEventListener);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.iv_send:
-                if (ConnectivityCheck.connectionAvailable(this)) {
-                    DatabaseReference userMessagePush =
-                            rootReference.child(MESSAGES).child(currentUserId).child(talkUserId).push();
-                    String pushId = userMessagePush.getKey();
-                    sendMessage(validation.trimAndNormalize(etMessage.getText().toString()),
-                            MESSAGE_TYPE_TEXT, pushId);
-                } else {
-                    Toast toast = Toast.makeText(this, R.string.offline, Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                }
+    public void sendReaction(String messageId, ReactionState reactionState) {
+        DatabaseReference databaseRefCurrentUser =
+                rootReference.child(MESSAGES).child(currentUserId).child(talkUserId).child(messageId);
+        databaseRefCurrentUser.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot snapshot = task.getResult();
+                MessageModel messageModel = snapshot.getValue(MessageModel.class);
+                int flagSetValue = reactionState.getFlagSetValue(messageModel.getReactionStatus());
+                databaseRefCurrentUser.child(REACTION_STATUS).setValue(flagSetValue).addOnCompleteListener(task1 -> {
+                    DatabaseReference databaseRefTalkUser =
+                            rootReference.child(MESSAGES).child(talkUserId).child(currentUserId).child(messageId);
+                    databaseRefTalkUser.get().addOnCompleteListener(task2 -> {
+                        if (task2.isSuccessful()) {
+                            DataSnapshot snapshot1 = task2.getResult();
+                            MessageModel messageModel1 = snapshot1.getValue(MessageModel.class);
+                            int flagSetValue2 =
+                                    reactionState.getFlagSetValue(messageModel1.getReactionStatus());
+                            databaseRefTalkUser.child(REACTION_STATUS).setValue(flagSetValue2).addOnCompleteListener(task3 -> {
+                            });
+                        }
+                    });
+                });
+            }
+        });
 
-                break;
-        }
     }
 
-    @Override
-    public void onMethodCallback() {
-        showDialog();
-    }
 
-    private void showDialog() {
+    public void showDialog() {
         DialogFragment dialogFragment = new ReactionFragment();
         dialogFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
+
+
 }

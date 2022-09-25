@@ -6,10 +6,16 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.R;
@@ -29,13 +35,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     private Context context;
     private List<MessageModel> messageModelList;
     private FirebaseAuth firebaseAuth;
-
-    private AdapterCallback mAdapterCallback;
+    private ActionMode actionMode;
+    private ConstraintLayout selectedView;
 
     public MessagesAdapter(Context context, List<MessageModel> messageModelList) {
         this.context = context;
         this.messageModelList = messageModelList;
-        this.mAdapterCallback = ((AdapterCallback) context);
     }
 
     @NonNull
@@ -54,27 +59,48 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         firebaseAuth = FirebaseAuth.getInstance();
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
         String fromUserId = messageModel.getMessageFrom();
-        SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        String dateTime = sfd.format(new Date(messageModel.getMessageTime()));
-        String[] splitString = dateTime.split(" ");
-        String messageTime = splitString[1];
+        String messageTime = strDateFormat(messageModel.getMessageTime(), "dd-MM-yyyy HH:mm");
         if (fromUserId.equals(currentUserId)) {
             setSentMessage(holder, messageModel.getMessage(), messageTime);
             setReceivedReaction(holder, messageModel.getReactionStatus());
+            setTag(holder, messageModel);
         } else {
             setReceivedMessage(holder, messageModel.getMessage(), messageTime);
-            setSentReaction(holder, messageModel.getReactionStatus());
             String photoName = messageModel.getMessageFrom() + EXT_JPG;
             setPhoto(holder, photoName);
+            setSentReaction(holder, messageModel.getReactionStatus());
+            setTag(holder, messageModel);
             holder.binding.tvReceivedMessage.setOnLongClickListener(view -> {
-                try {
-                    mAdapterCallback.onMethodCallback();
-                } catch (ClassCastException exception) {
-                    // do something
+                if (actionMode != null) {
+                    return false;
                 }
+                selectedView = holder.binding.clMessage;
+                actionMode = ((AppCompatActivity) context).startSupportActionMode(actionModeCallback);
+//                ((TalkActivity) context).showDialog();
                 return true;
             });
         }
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return messageModelList.size();
+    }
+
+    private void setTag(MessageViewHolder holder, MessageModel model) {
+        holder.binding.clMessage.setTag(R.id.TAG_MESSAGE, model.getMessage());
+        holder.binding.clMessage.setTag(R.id.TAG_MESSAGE_ID, model.getMessageId());
+        holder.binding.clMessage.setTag(R.id.TAG_MESSAGE_TYPE, model.getMessageType());
+    }
+
+
+    private String strDateFormat(long time, String pattern) {
+        SimpleDateFormat sfd = new SimpleDateFormat(pattern);
+        String dateTime = sfd.format(new Date(time));
+        String[] splitString = dateTime.split(" ");
+        String messageTime = splitString[1];
+        return messageTime;
     }
 
     private void setPhoto(MessageViewHolder holder, String photoName) {
@@ -140,13 +166,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         }
     }
 
-
-    @Override
-    public int getItemCount() {
-        return messageModelList.size();
-    }
-
-
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         private MessageLayoutBinding binding;
 
@@ -157,9 +176,59 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         }
     }
 
+    public ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.menu_reaction, menu);
+            return true;
+        }
 
-    public static interface AdapterCallback {
-        void onMethodCallback();
-    }
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            String selectedMessageId = String.valueOf(selectedView.getTag(R.id.TAG_MESSAGE_ID));
+            String selectedMessage = String.valueOf(selectedView.getTag(R.id.TAG_MESSAGE));
+            String selectedMessageType = String.valueOf(selectedView.getTag(R.id.TAG_MESSAGE_TYPE));
+            System.out.println(selectedMessage + " : " + selectedMessageId + " : " + selectedMessageType);
+            switch (menuItem.getItemId()) {
+                case R.id.reaction_celebrate:
+                    ((TalkActivity) context).sendReaction(selectedMessageId,
+                            ReactionState.STATE_CELEBRATE);
+                    actionMode.finish();
+                    break;
+                case R.id.reaction_crying:
+                    ((TalkActivity) context).sendReaction(selectedMessageId,
+                            ReactionState.STATE_CRYING);
+                    actionMode.finish();
+                    break;
+                case R.id.reaction_furious:
+                    ((TalkActivity) context).sendReaction(selectedMessageId,
+                            ReactionState.STATE_FURIOUS);
+                    actionMode.finish();
+                    break;
+                case R.id.reaction_pleading:
+                    ((TalkActivity) context).sendReaction(selectedMessageId,
+                            ReactionState.STATE_PLEADING);
+                    actionMode.finish();
+                    break;
+                case R.id.reaction_wink:
+                    ((TalkActivity) context).sendReaction(selectedMessageId,
+                            ReactionState.STATE_WINK);
+                    actionMode.finish();
+                    break;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            actionMode = null;
+        }
+    };
 }
 

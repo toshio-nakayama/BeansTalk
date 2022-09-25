@@ -23,4 +23,8 @@ public enum ReactionState {
         }
         return false;
     }
+
+    public int getFlagSetValue(int value) {
+        return (value |= flag);
+    }
 }

@@ -8,18 +8,18 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
 
-public class FloatActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity {
     private ImageView ivFloat;
     private Animation animation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorUtil.setTheme(this);
-        setContentView(R.layout.activity_float);
+        ColorUtils.setTheme(this);
+        setContentView(R.layout.activity_splash);
 
         ivFloat = findViewById(R.id.iv_float);
         animation = AnimationUtils.loadAnimation(this, R.anim.float_animation);
@@ -31,7 +31,7 @@ public class FloatActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                startActivity(new Intent(FloatActivity.this, LoginActivity.class));
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                 finish();
             }
 

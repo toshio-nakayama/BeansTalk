@@ -19,7 +19,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,7 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.gmail.h1990.toshio.beanstalk.R;
-import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
+import com.gmail.h1990.toshio.beanstalk.databinding.ActivitySignupBinding;
 import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
 import com.gmail.h1990.toshio.beanstalk.model.UserModel;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
@@ -70,9 +70,8 @@ public class SignupActivity extends AppCompatActivity {
     @ConfirmPassword
     private EditText etConfirmPassword;
 
-    private String name, email, password, confirmPassword;
-    private ImageView ivProfile;
-    private View progressBar;
+    private String name;
+    private String email;
 
     private Validator validator;
     private Validation validation;
@@ -84,23 +83,43 @@ public class SignupActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private SharedPreferences pref;
 
+    private ActivitySignupBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorUtil.setTheme(this);
-        setContentView(R.layout.activity_signup);
+        ColorUtils.setTheme(this);
+        binding = ActivitySignupBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
+        initView();
+        setupFirebase();
+        setupValidation();
+        pref = getPreferences(Context.MODE_PRIVATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        validator = null;
+    }
+
+    private void initView() {
         etName = findViewById(R.id.et_name);
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         etConfirmPassword = findViewById(R.id.et_confirm_password);
-        ivProfile = findViewById(R.id.iv_profile);
-        progressBar = findViewById(R.id.progress_bar);
+    }
+
+    private void setupFirebase() {
         firebaseAuth = FirebaseAuth.getInstance();
         storageRootRef = FirebaseStorage.getInstance().getReference();
         databaseRootRef = FirebaseDatabase.getInstance().getReference();
-        pref = getPreferences(Context.MODE_PRIVATE);
+    }
+
+    private void setupValidation() {
         validator = new Validator(this);
         validation = new Validation(validator);
         validator.setValidationListener(validation);
@@ -121,7 +140,7 @@ public class SignupActivity extends AppCompatActivity {
                     result -> {
                         if (result.getResultCode() == RESULT_OK) {
                             localFileUri = result.getData().getData();
-                            ivProfile.setImageURI(localFileUri);
+                            binding.ivProfile.setImageURI(localFileUri);
                         }
 
                     });
@@ -201,8 +220,8 @@ public class SignupActivity extends AppCompatActivity {
     public void onSignupButtonClick(View view) {
         name = validation.trimAndNormalize(etName.getText().toString());
         email = validation.trimAndNormalize(etEmail.getText().toString());
-        password = validation.trimAndNormalize(etPassword.getText().toString());
-        confirmPassword = validation.trimAndNormalize(etConfirmPassword.getText().toString());
+        String password = validation.trimAndNormalize(etPassword.getText().toString());
+        String confirmPassword = validation.trimAndNormalize(etConfirmPassword.getText().toString());
         if (validation.validate()) {
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
                 if (task.isSuccessful()) {

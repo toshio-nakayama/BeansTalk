@@ -8,7 +8,7 @@ import android.content.SharedPreferences;
 
 import com.gmail.h1990.toshio.beanstalk.R;
 
-public class ColorUtil {
+public class ColorUtils {
 
     public static void setTheme(Activity activity) {
         SharedPreferences sharedPref =

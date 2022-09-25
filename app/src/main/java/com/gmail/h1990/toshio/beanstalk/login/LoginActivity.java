@@ -17,10 +17,10 @@ import androidx.fragment.app.DialogFragment;
 
 import com.gmail.h1990.toshio.beanstalk.MainActivity;
 import com.gmail.h1990.toshio.beanstalk.R;
-import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.changecolor.MyColorFragment;
 import com.gmail.h1990.toshio.beanstalk.signup.SignupActivity;
-import com.gmail.h1990.toshio.beanstalk.util.ConnectivityCheck;
+import com.gmail.h1990.toshio.beanstalk.util.NetworkChecker;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,25 +36,30 @@ public class LoginActivity extends AppCompatActivity implements MyColorFragment.
 
     private Validation validation;
     private View progressBar;
+    Validator validator;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorUtil.setTheme(this);
+        ColorUtils.setTheme(this);
         setContentView(R.layout.activity_login);
 
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         Button btMyColor = findViewById(R.id.bt_my_color);
         progressBar = findViewById(R.id.progress_bar);
+        setupValidation();
 
-        Validator validator = new Validator(this);
-        validation = new Validation(validator);
-        validator.setValidationListener(validation);
         btMyColor.setOnClickListener(view -> {
             showDialog();
         });
+    }
+
+    private void setupValidation() {
+        validator = new Validator(this);
+        validation = new Validation(validator);
+        validator.setValidationListener(validation);
     }
 
 
@@ -69,11 +74,10 @@ public class LoginActivity extends AppCompatActivity implements MyColorFragment.
         if (!validation.validate()) {
             return;
         }
-        if (!ConnectivityCheck.connectionAvailable(this)) {
+        if (!NetworkChecker.connectionAvailable(this)) {
             Toast toast = Toast.makeText(this, R.string.offline, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-
             return;
         }
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -87,6 +91,12 @@ public class LoginActivity extends AppCompatActivity implements MyColorFragment.
                     }
                 });
 
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 
     @Override

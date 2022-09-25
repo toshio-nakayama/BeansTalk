@@ -30,12 +30,12 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.gmail.h1990.toshio.beanstalk.R;
-import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.databinding.ActivityTalkBinding;
 import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionState;
-import com.gmail.h1990.toshio.beanstalk.util.ConnectivityCheck;
+import com.gmail.h1990.toshio.beanstalk.util.NetworkChecker;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -69,7 +69,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorUtil.setTheme(this);
+        ColorUtils.setTheme(this);
         binding = ActivityTalkBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
@@ -152,7 +152,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_send:
-                if (ConnectivityCheck.connectionAvailable(this)) {
+                if (NetworkChecker.connectionAvailable(this)) {
                     DatabaseReference userMessagePush =
                             rootReference.child(MESSAGES).child(currentUserId).child(talkUserId).push();
                     String pushId = userMessagePush.getKey();

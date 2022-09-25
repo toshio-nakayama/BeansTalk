@@ -3,6 +3,7 @@ package com.gmail.h1990.toshio.beanstalk.profile;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.MAX_LENGTH_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.MAX_LENGTH_STATUS_MESSAGE;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.MIN_LENGTH_NAME;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.CONTENTS;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.EDIT_TYPE;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.REQUEST_KEY;
@@ -16,6 +17,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -182,8 +184,10 @@ public class MessageEditFragment extends DialogFragment {
         currentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 currentUserRef.child(NAME).setValue(name).addOnCompleteListener(task1 -> {
-
+                    Log.d(TAG, getString(R.string.user_profile_updated));
                 });
+            } else {
+                Log.e(TAG, getString(R.string.failed_to_update));
             }
         });
 

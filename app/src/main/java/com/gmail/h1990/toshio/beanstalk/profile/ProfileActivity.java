@@ -16,7 +16,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.gmail.h1990.toshio.beanstalk.R;
-import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -27,7 +27,7 @@ public class ProfileActivity extends AppCompatActivity implements ProfileHomeFra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorUtil.setTheme(this);
+        ColorUtils.setTheme(this);
         setContentView(R.layout.activity_profile);
 
         setupNavigation();

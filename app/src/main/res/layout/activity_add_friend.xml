@@ -61,7 +61,6 @@
         android:layout_marginEnd="8dp"
         android:background="@drawable/round_button_primary"
         android:drawableTop="@drawable/ic_person_add"
-        android:onClick="onAddBtnClick"
         android:text="@string/add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

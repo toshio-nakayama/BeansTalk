@@ -132,6 +132,7 @@
         android:id="@+id/ll_sent_reaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="@id/ll_received"
         app:layout_constraintTop_toBottomOf="@+id/ll_received">

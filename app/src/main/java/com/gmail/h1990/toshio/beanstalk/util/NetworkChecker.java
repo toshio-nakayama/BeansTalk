@@ -3,7 +3,7 @@ package com.gmail.h1990.toshio.beanstalk.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 
-public class ConnectivityCheck {
+public class NetworkChecker {
     public static boolean connectionAvailable(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

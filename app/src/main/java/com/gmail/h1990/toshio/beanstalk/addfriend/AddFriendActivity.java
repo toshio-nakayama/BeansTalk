@@ -12,18 +12,15 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.gmail.h1990.toshio.beanstalk.MainActivity;
 import com.gmail.h1990.toshio.beanstalk.R;
-import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtil;
+import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.common.Extras;
+import com.gmail.h1990.toshio.beanstalk.databinding.ActivityAddFriendBinding;
+import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,34 +30,35 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Objects;
+
 public class AddFriendActivity extends AppCompatActivity {
-    private ImageButton ibClose;
-    private ImageView ivProfile;
-    private TextView tvName;
-    private Button btAdd;
-    private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
     private DatabaseReference databaseReferenceUser, databaseReferenceTalk;
     private String userId;
+    private ActivityAddFriendBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ColorUtil.setTheme(this);
-        setContentView(R.layout.activity_add_friend);
-
-        ibClose = findViewById(R.id.ib_close);
-        ivProfile = findViewById(R.id.iv_profile);
-        tvName = findViewById(R.id.tv_name);
-        btAdd = findViewById(R.id.bt_add);
-        firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = firebaseAuth.getCurrentUser();
-        databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(USERS);
-        databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK);
+        ColorUtils.setTheme(this);
+        binding = ActivityAddFriendBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         if (getIntent().hasExtra(USER_KEY)) {
             userId = getIntent().getStringExtra(Extras.USER_KEY);
         }
+        setupFirebase();
         setProfile();
+        binding.ibClose.setOnClickListener(view1 -> finish());
+        binding.btAdd.setOnClickListener(view2 -> onAddBtnClick());
+    }
+
+    private void setupFirebase() {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+        databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(USERS);
+        databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK);
     }
 
 
@@ -73,19 +71,15 @@ public class AddFriendActivity extends AppCompatActivity {
                     final StorageReference fileRef = FirebaseStorage.getInstance().getReference()
                             .child(IMAGES_FOLDER).child(PHOTO).child(photoName);
                     fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        tvName.setText(snapshot.child(NAME).getValue().toString());
-                        Glide.with(AddFriendActivity.this)
-                                .load(uri)
-                                .placeholder(R.drawable.default_profile)
-                                .error(R.drawable.default_profile)
-                                .into(ivProfile);
+                        binding.tvName.setText(Objects.requireNonNull(snapshot.child(NAME).getValue()).toString());
+                        GlideUtils.setPhoto(this, uri, R.drawable.default_profile, binding.ivProfile);
                     });
                 }
             }
         });
     }
 
-    public void onAddBtnClick(View v) {
+    private void onAddBtnClick() {
         databaseReferenceTalk.child(currentUser.getUid()).child(userId).child(TIME_STAMP)
                 .setValue(ServerValue.TIMESTAMP).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -99,9 +93,4 @@ public class AddFriendActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    public void onCloseBtnClick(View v) {
-
-    }
-
 }

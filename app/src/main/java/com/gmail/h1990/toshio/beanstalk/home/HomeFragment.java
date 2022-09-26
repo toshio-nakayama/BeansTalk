@@ -1,11 +1,14 @@
 package com.gmail.h1990.toshio.beanstalk.home;
 
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,9 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ import androidx.navigation.Navigation;
 
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.addfriend.AddFriendActivity;
+import com.gmail.h1990.toshio.beanstalk.databinding.FragmentHomeBinding;
 import com.gmail.h1990.toshio.beanstalk.profile.ProfileActivity;
 import com.gmail.h1990.toshio.beanstalk.qrcode.QRScanActivity;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
@@ -42,27 +44,31 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 public class HomeFragment extends Fragment implements View.OnTouchListener, MenuProvider {
-    private TextView tvFriendsCount, tvName;
     private FirebaseUser currentUser;
-    private DatabaseReference databaseReferenceTalk;
-    private ImageView ivProfile;
+    private DatabaseReference databaseReferenceTalk, databaseReferenceUser;
+    private FragmentHomeBinding binding;
 
     public HomeFragment() {
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupFirebase();
+    }
+
+    private void setupFirebase() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
+        databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(USERS);
         databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
         return view;
     }
 
@@ -70,19 +76,32 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tvName = view.findViewById(R.id.tv_name);
-        tvFriendsCount = view.findViewById(R.id.tv_friends_count);
-        ivProfile = view.findViewById(R.id.iv_profile);
         LinearLayout llFriendList = view.findViewById(R.id.ll_friend_list);
         llFriendList.setOnClickListener(v -> {
             Navigation.findNavController(view).navigate(R.id.friendFragment);
         });
         setFriendsCount();
-        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile, ivProfile);
-        tvName.setText(currentUser.getDisplayName());
-        ivProfile.setOnTouchListener(HomeFragment.this);
+        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile,
+                binding.ivProfile);
+        binding.tvName.setText(currentUser.getDisplayName());
+        binding.ivProfile.setOnTouchListener(HomeFragment.this);
         MenuHost menuHost = requireActivity();
         menuHost.addMenuProvider(this, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+    }
+
+    @Override
+    public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.menu_home, menu);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+        if (menuItem.getItemId() == R.id.menu_qr_scan) {
+            launchQRScanner();
+        } else {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -103,7 +122,7 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String count = String.valueOf(snapshot.getChildrenCount());
-                tvFriendsCount.setText(count);
+                binding.tvFriendsCount.setText(count);
             }
 
             @Override
@@ -125,25 +144,29 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
             registerForActivityResult(new ScanContract(), result -> {
                 if (result.getContents() != null) {
                     String userId = result.getContents();
-                    Intent intent = new Intent(getActivity(), AddFriendActivity.class);
-                    intent.putExtra(USER_KEY, userId);
-                    startActivity(intent);
+                    validateOnId(userId);
                 }
             });
 
+    private void validateOnId(String id) {
+        String currentUserId = currentUser.getUid();
+        if (!id.equals(currentUserId)) {
+            databaseReferenceTalk.child(currentUserId).child(id).get().addOnFailureListener(e -> {
+                Log.e(TAG, getString(R.string.failed_to_get_data));
+            }).addOnSuccessListener(dataSnapshot -> {
+                if (!dataSnapshot.exists()) {
+                    databaseReferenceUser.child(id).get().addOnFailureListener(e -> {
+                        Log.e(TAG, getString(R.string.failed_to_get_data));
+                    }).addOnSuccessListener(dataSnapshot1 -> {
+                        if (dataSnapshot1.exists()) {
+                            Intent intent = new Intent(getActivity(), AddFriendActivity.class);
+                            intent.putExtra(USER_KEY, id);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            });
 
-    @Override
-    public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-        menuInflater.inflate(R.menu.menu_home, menu);
-    }
-
-    @Override
-    public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.menu_qr_scan) {
-            launchQRScanner();
-        } else {
-            return false;
         }
-        return true;
     }
 }

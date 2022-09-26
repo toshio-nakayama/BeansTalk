@@ -14,9 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.databinding.FragmentTalkBinding;
 import com.gmail.h1990.toshio.beanstalk.model.TalkListModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class TalkFragment extends Fragment {
-    private RecyclerView rvTalkList;
     private TalkListAdapter talkListAdapter;
     private List<TalkListModel> talkListModelList;
     private DatabaseReference databaseReferenceTalk, databaseReferenceUsers;
@@ -41,6 +39,7 @@ public class TalkFragment extends Fragment {
     private FirebaseUser currentUser;
     private ChildEventListener childEventListener;
     private Query query;
+    private FragmentTalkBinding binding;
 
     public TalkFragment() {
     }
@@ -53,20 +52,27 @@ public class TalkFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_talk, container, false);
+        binding = FragmentTalkBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvTalkList = view.findViewById(R.id.rv_talk);
         talkListModelList = new ArrayList<>();
         talkListAdapter = new TalkListAdapter(getActivity(), talkListModelList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
-        rvTalkList.setLayoutManager(linearLayoutManager);
-        rvTalkList.setAdapter(talkListAdapter);
+        binding.rvTalkList.setLayoutManager(linearLayoutManager);
+        binding.rvTalkList.setAdapter(talkListAdapter);
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
         databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child(USERS);

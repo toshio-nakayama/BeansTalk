@@ -36,7 +36,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AddFriendActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
@@ -106,15 +105,5 @@ public class AddFriendActivity extends AppCompatActivity {
                                 finish();
                             });
                 });
-    }
-
-    public abstract class Validator {
-        protected AtomicInteger flag;
-
-        protected abstract void checkOnOwnId(String userId);
-
-        protected abstract void checkOnAddedId(String userId);
-
-        protected abstract void checkOnValidId(String userId);
     }
 }

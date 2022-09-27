@@ -33,7 +33,7 @@
     <string name="failed_to_send_message">Failed to send message</string>
     <string name="message_sent_successfully">Message sent successfully</string>
     <string name="settings">設定</string>
-    <string name="profile_edit">プロフィール編集</string>
+    <string name="profile_edit">プロフィール</string>
     <string name="select_theme_color">テーマカラーを選択してください</string>
     <string name="save">保存</string>
     <string name="failed_to_update">Failed to update</string>

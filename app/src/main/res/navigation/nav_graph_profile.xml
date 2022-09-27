@@ -14,7 +14,7 @@
         android:id="@+id/profileEditFragment"
         android:name="com.gmail.h1990.toshio.beanstalk.profile.ProfileEditFragment"
         android:label="@string/profile_edit"
-        tools:layout="@layout/fragment_profile_edit" >
+        tools:layout="@layout/fragment_profile_edit">
         <action
             android:id="@+id/action_profileEditFragment_to_messageEditFragment"
             app:destination="@id/messageEditFragment" />
@@ -22,8 +22,8 @@
     <fragment
         android:id="@+id/profileHomeFragment"
         android:name="com.gmail.h1990.toshio.beanstalk.profile.ProfileHomeFragment"
-        android:label="@string/profile"
-        tools:layout="@layout/fragment_profile_home" >
+        android:label=""
+        tools:layout="@layout/fragment_profile_home">
         <action
             android:id="@+id/action_profileHomeFragment_to_profileEditFragment"
             app:destination="@id/profileEditFragment" />

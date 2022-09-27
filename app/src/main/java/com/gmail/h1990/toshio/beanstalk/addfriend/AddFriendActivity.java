@@ -62,9 +62,10 @@ public class AddFriendActivity extends AppCompatActivity {
 
     private void setupFirebase() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
         currentUser = firebaseAuth.getCurrentUser();
-        databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(USERS);
-        databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK);
+        databaseReferenceUser = databaseRootRef.child(USERS);
+        databaseReferenceTalk = databaseRootRef.child(TALK);
         storageRootRef = FirebaseStorage.getInstance().getReference();
     }
 
@@ -96,7 +97,7 @@ public class AddFriendActivity extends AppCompatActivity {
                 .setValue(ServerValue.TIMESTAMP).addOnFailureListener(e -> {
                     Log.e(TAG, getString(R.string.failed_to_add_friend));
                 }).addOnSuccessListener(unused -> {
-                    databaseReferenceTalk.child(friendUserId).child(currentUser.getUid()).child(TIME_STAMP)
+                    databaseReferenceTalk.child(friendUserId).child(currentUserId).child(TIME_STAMP)
                             .setValue(ServerValue.TIMESTAMP).addOnFailureListener(e -> {
                                 Log.e(TAG, getString(R.string.failed_to_add_friend));
                             }).addOnSuccessListener(unused1 -> {

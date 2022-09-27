@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,6 +18,7 @@ import com.gmail.h1990.toshio.beanstalk.MainActivity;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.changecolor.MyColorFragment;
+import com.gmail.h1990.toshio.beanstalk.databinding.ActivityLoginBinding;
 import com.gmail.h1990.toshio.beanstalk.signup.SignupActivity;
 import com.gmail.h1990.toshio.beanstalk.util.NetworkChecker;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
@@ -35,42 +35,53 @@ public class LoginActivity extends AppCompatActivity implements MyColorFragment.
     private EditText etPassword;
 
     private Validation validation;
-    private View progressBar;
     Validator validator;
+    private ActivityLoginBinding binding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ColorUtils.setTheme(this);
-        setContentView(R.layout.activity_login);
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
-        Button btMyColor = findViewById(R.id.bt_my_color);
-        progressBar = findViewById(R.id.progress_bar);
-        setupValidation();
-
-        btMyColor.setOnClickListener(view -> {
-            showDialog();
-        });
-    }
-
-    private void setupValidation() {
         validator = new Validator(this);
         validation = new Validation(validator);
         validator.setValidationListener(validation);
+        binding.btMyColor.setOnClickListener(view1 -> generateMyColorDialog());
+        binding.tvSignup.setOnClickListener(view2 -> onTvSignupClick());
+        binding.btLogin.setOnClickListener(view13 -> onLoginBtnClick());
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
 
-    public void onTextViewSignupClick(View view) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
+    }
+
+    public void onTvSignupClick() {
         startActivity(new Intent(this, SignupActivity.class));
+        finish();
     }
 
-
-    public void onLoginButtonClick(View view) {
-        String email = validation.trimAndNormalize(etEmail.getText().toString());
-        String password = validation.trimAndNormalize(etPassword.getText().toString());
+    public void onLoginBtnClick() {
+        String email = validation.trimAndNormalize(binding.etEmail.getText().toString());
+        String password = validation.trimAndNormalize(binding.etPassword.getText().toString());
         if (!validation.validate()) {
             return;
         }
@@ -90,27 +101,9 @@ public class LoginActivity extends AppCompatActivity implements MyColorFragment.
                         Log.e(TAG, getString(R.string.failed_to_login, task.getException()));
                     }
                 });
-
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0, 0);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        if (firebaseUser != null) {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }
-    }
-
-    private void showDialog() {
+    private void generateMyColorDialog() {
         DialogFragment dialogFragment = new MyColorFragment();
         dialogFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }

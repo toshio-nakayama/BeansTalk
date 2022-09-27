@@ -29,14 +29,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class TalkFragment extends Fragment {
     private TalkListAdapter talkListAdapter;
     private List<TalkListModel> talkListModelList;
     private DatabaseReference databaseReferenceTalk, databaseReferenceUsers;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser currentUser;
     private ChildEventListener childEventListener;
     private Query query;
     private FragmentTalkBinding binding;
@@ -47,6 +46,14 @@ public class TalkFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    private void setupFirebase() {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child(USERS);
+        databaseReferenceTalk = FirebaseDatabase.getInstance().getReference()
+                .child(TALK).child(Objects.requireNonNull(currentUser).getUid());
     }
 
     @Override
@@ -66,6 +73,7 @@ public class TalkFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupFirebase();
         talkListModelList = new ArrayList<>();
         talkListAdapter = new TalkListAdapter(getActivity(), talkListModelList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -73,10 +81,6 @@ public class TalkFragment extends Fragment {
         linearLayoutManager.setStackFromEnd(true);
         binding.rvTalkList.setLayoutManager(linearLayoutManager);
         binding.rvTalkList.setAdapter(talkListAdapter);
-        firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = firebaseAuth.getCurrentUser();
-        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child(USERS);
-        databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK).child(currentUser.getUid());
         query = databaseReferenceTalk.orderByChild(TIME_STAMP);
         childEventListener = new ChildEventListener() {
             @Override

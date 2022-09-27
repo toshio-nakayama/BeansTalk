@@ -2,26 +2,29 @@ package com.gmail.h1990.toshio.beanstalk;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
+import com.gmail.h1990.toshio.beanstalk.databinding.ActivitySplashBinding;
 import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
 
 public class SplashActivity extends AppCompatActivity {
-    private ImageView ivFloat;
+
     private Animation animation;
+    private ActivitySplashBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ColorUtils.setTheme(this);
-        setContentView(R.layout.activity_splash);
+        binding = ActivitySplashBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        ivFloat = findViewById(R.id.iv_float);
         animation = AnimationUtils.loadAnimation(this, R.anim.float_animation);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -45,7 +48,12 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ivFloat.startAnimation(animation);
+        binding.ivFloat.startAnimation(animation);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
 }

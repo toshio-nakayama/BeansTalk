@@ -50,6 +50,7 @@ import com.mobsandgeeks.saripaar.Validator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class TalkActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -62,7 +63,6 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     private static final int RECORD_PER_PAGE = 30;
     private ChildEventListener childEventListener;
     private String talkUserName;
-    private String talkUserPhotoName;
     private ActivityTalkBinding binding;
     private Validator validator;
 
@@ -102,7 +102,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     private void setupFirebase() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         rootReference = FirebaseDatabase.getInstance().getReference();
-        currentUserId = firebaseAuth.getCurrentUser().getUid();
+        currentUserId = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
     }
 
     private void acceptData() {
@@ -113,7 +113,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
             talkUserName = getIntent().getStringExtra(USER_NAME);
         }
         if (getIntent().hasExtra(PHOTO_NAME)) {
-            talkUserPhotoName = getIntent().getStringExtra(PHOTO_NAME);
+            String talkUserPhotoName = getIntent().getStringExtra(PHOTO_NAME);
         }
     }
 
@@ -133,45 +133,39 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         validator = null;
+        binding = null;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-        switch (itemId) {
-            case android.R.id.home:
-                finish();
-                break;
-            default:
-                break;
+        if (itemId == android.R.id.home) {
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.iv_send:
-                if (NetworkChecker.connectionAvailable(this)) {
-                    DatabaseReference userMessagePush =
-                            rootReference.child(MESSAGES).child(currentUserId).child(talkUserId).push();
-                    String pushId = userMessagePush.getKey();
-                    sendMessage(validation.trimAndNormalize(binding.etMessage.getText().toString()),
-                            MESSAGE_TYPE_TEXT, pushId);
-                } else {
-                    Toast toast = Toast.makeText(this, R.string.offline, Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                }
-
-                break;
+        if (v.getId() == R.id.iv_send) {
+            if (NetworkChecker.connectionAvailable(this)) {
+                DatabaseReference userMessagePush =
+                        rootReference.child(MESSAGES).child(currentUserId).child(talkUserId).push();
+                String pushId = userMessagePush.getKey();
+                sendMessage(validation.trimAndNormalize(binding.etMessage.getText().toString()),
+                        MESSAGE_TYPE_TEXT, pushId);
+            } else {
+                Toast toast = Toast.makeText(this, R.string.offline, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
         }
     }
 
     private void sendMessage(String msg, String msgType, String pushId) {
         try {
             if (!msg.equals("")) {
-                HashMap messageMap = new HashMap();
+                HashMap<Object, Object> messageMap = new HashMap<>();
                 messageMap.put(MESSAGE_ID, pushId);
                 messageMap.put(MESSAGE, msg);
                 messageMap.put(MESSAGE_TYPE, msgType);
@@ -180,7 +174,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                 messageMap.put(REACTION_STATUS, 0b00000);
                 String currentUserReference = MESSAGES + "/" + currentUserId + "/" + talkUserId;
                 String talkUserReference = MESSAGES + "/" + talkUserId + "/" + currentUserId;
-                HashMap messageUserMap = new HashMap();
+                HashMap<String, Object> messageUserMap = new HashMap<>();
                 messageUserMap.put(currentUserReference + "/" + pushId, messageMap);
                 messageUserMap.put(talkUserReference + "/" + pushId, messageMap);
                 binding.etMessage.getEditableText().clear();
@@ -239,28 +233,23 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     public void sendReaction(String messageId, ReactionState reactionState) {
         DatabaseReference databaseRefCurrentUser =
                 rootReference.child(MESSAGES).child(currentUserId).child(talkUserId).child(messageId);
-        databaseRefCurrentUser.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DataSnapshot snapshot = task.getResult();
-                MessageModel messageModel = snapshot.getValue(MessageModel.class);
-                int flagSetValue = reactionState.getFlagSetValue(messageModel.getReactionStatus());
-                databaseRefCurrentUser.child(REACTION_STATUS).setValue(flagSetValue).addOnCompleteListener(task1 -> {
-                    DatabaseReference databaseRefTalkUser =
-                            rootReference.child(MESSAGES).child(talkUserId).child(currentUserId).child(messageId);
-                    databaseRefTalkUser.get().addOnCompleteListener(task2 -> {
-                        if (task2.isSuccessful()) {
-                            DataSnapshot snapshot1 = task2.getResult();
-                            MessageModel messageModel1 = snapshot1.getValue(MessageModel.class);
-                            int flagSetValue2 =
-                                    reactionState.getFlagSetValue(messageModel1.getReactionStatus());
-                            databaseRefTalkUser.child(REACTION_STATUS).setValue(flagSetValue2).addOnCompleteListener(task3 -> {
+        databaseRefCurrentUser.get().addOnSuccessListener(dataSnapshot -> {
+            MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
+            int flagSetValue = reactionState.getFlagSetValue(Objects.requireNonNull(messageModel).getReactionStatus());
+            databaseRefCurrentUser.child(REACTION_STATUS).setValue(flagSetValue).addOnSuccessListener(unused -> {
+                DatabaseReference databaseRefTalkUser =
+                        rootReference.child(MESSAGES).child(talkUserId).child(currentUserId).child(messageId);
+                databaseRefTalkUser.get().addOnSuccessListener(dataSnapshot1 -> {
+                    MessageModel messageModel1 = dataSnapshot1.getValue(MessageModel.class);
+                    int flagSetValue1 =
+                            reactionState.getFlagSetValue(Objects.requireNonNull(messageModel1).getReactionStatus());
+                    databaseRefTalkUser.child(REACTION_STATUS).setValue(flagSetValue1)
+                            .addOnFailureListener(e -> Log.e(TAG, e.getMessage()))
+                            .addOnSuccessListener(unused1 -> {
                             });
-                        }
-                    });
                 });
-            }
+            });
         });
-
     }
 
 

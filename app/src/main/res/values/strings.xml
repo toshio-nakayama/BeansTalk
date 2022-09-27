@@ -41,4 +41,6 @@
     <string name="failed_to_add_friend">Failed to add friend.</string>
     <string name="failed_to_download_uri">Failed to download uri.</string>
     <string name="failed_to_get_data">Failed to get data.</string>
+    <string name="failed_to_upload_file">Failed to upload file.</string>
+    <string name="signup_failed">Signup failed.</string>
 </resources>

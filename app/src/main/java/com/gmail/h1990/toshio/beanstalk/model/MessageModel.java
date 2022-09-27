@@ -14,18 +14,6 @@ public class MessageModel {
     public MessageModel() {
     }
 
-    @Override
-    public String toString() {
-        return "MessageModel{" +
-                "message='" + message + '\'' +
-                ", messageFrom='" + messageFrom + '\'' +
-                ", messageId='" + messageId + '\'' +
-                ", messageTime=" + messageTime +
-                ", messageType='" + messageType + '\'' +
-                ", reactionStatus=" + reactionStatus +
-                '}';
-    }
-
     public MessageModel(String message, String messageFrom, String messageId, long messageTime, String messageType, int reactionStatus) {
         this.message = message;
         this.messageFrom = messageFrom;
@@ -47,40 +35,20 @@ public class MessageModel {
         return messageFrom;
     }
 
-    public void setMessageFrom(String messageFrom) {
-        this.messageFrom = messageFrom;
-    }
-
     public String getMessageId() {
         return messageId;
-    }
-
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
     }
 
     public long getMessageTime() {
         return messageTime;
     }
 
-    public void setMessageTime(long messageTime) {
-        this.messageTime = messageTime;
-    }
-
     public String getMessageType() {
         return messageType;
     }
 
-    public void setMessageType(String messageType) {
-        this.messageType = messageType;
-    }
-
     public int getReactionStatus() {
         return reactionStatus;
-    }
-
-    public void setReactionStatus(int reactionStatus) {
-        this.reactionStatus = reactionStatus;
     }
 }
 

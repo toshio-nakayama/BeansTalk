@@ -2,14 +2,12 @@ package com.gmail.h1990.toshio.beanstalk.reaction;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.databinding.ReactionBtnLayoutBinding;
 import com.gmail.h1990.toshio.beanstalk.talk.TalkActivity;
 
 import java.util.List;
@@ -18,6 +16,7 @@ public class ReactionAdapter extends RecyclerView.Adapter<ReactionAdapter.Reacti
 
     private ReactionSelectedListener callback;
     private String selectedMessageId;
+    private ReactionBtnLayoutBinding binding;
 
     public interface ReactionSelectedListener {
         public void onReactionSelected();
@@ -37,16 +36,17 @@ public class ReactionAdapter extends RecyclerView.Adapter<ReactionAdapter.Reacti
     @NonNull
     @Override
     public ReactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reaction_btn_layout
-                , parent, false);
-        return new ReactionViewHolder(view);
+        ReactionBtnLayoutBinding binding =
+                ReactionBtnLayoutBinding.inflate(LayoutInflater.from(parent.getContext()), parent,
+                        false);
+        return new ReactionViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ReactionViewHolder holder, int position) {
         ReactionModel reactionModel = reactionModels.get(position);
-        holder.ibReaction.setBackground(reactionModel.getGraphics());
-        holder.ibReaction.setOnClickListener(view -> {
+        holder.binding.ibReaction.setBackground(reactionModel.getGraphics());
+        holder.binding.ibReaction.setOnClickListener(view -> {
             ((TalkActivity) context).sendReaction(selectedMessageId, reactionModel.getReactionState());
             callback.onReactionSelected();
         });
@@ -59,11 +59,13 @@ public class ReactionAdapter extends RecyclerView.Adapter<ReactionAdapter.Reacti
     }
 
     public class ReactionViewHolder extends RecyclerView.ViewHolder {
-        private final ImageButton ibReaction;
 
-        public ReactionViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ibReaction = itemView.findViewById(R.id.ib_reaction);
+        private final ReactionBtnLayoutBinding binding;
+
+
+        public ReactionViewHolder(@NonNull ReactionBtnLayoutBinding item) {
+            super(item.getRoot());
+            binding = item;
 
         }
     }

@@ -42,7 +42,6 @@
             android:background="@drawable/pick_image_button"
             android:elevation="5dp"
             android:gravity="center_vertical|center_horizontal"
-            android:onClick="pickUpImage"
             app:backgroundTint="@null"
             tools:ignore="SpeakableTextPresentCheck" />
 
@@ -142,9 +141,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:background="@drawable/round_button_primary"
-        android:onClick="onSignupButtonClick"
         android:text="@string/register"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -4,15 +4,13 @@ import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.databinding.ColorBtnLayoutBinding;
 
 import java.util.List;
 
@@ -37,9 +35,9 @@ public class MyColorAdapter extends RecyclerView.Adapter<MyColorAdapter.ColorVie
     @NonNull
     @Override
     public ColorViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.color_btn_layout,
-                parent, false);
-        return new ColorViewHolder(view);
+        ColorBtnLayoutBinding binding =
+                ColorBtnLayoutBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ColorViewHolder(binding);
     }
 
     @Override
@@ -47,11 +45,10 @@ public class MyColorAdapter extends RecyclerView.Adapter<MyColorAdapter.ColorVie
         ColorModel colorModel = colorModelList.get(position);
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(colorModel.getStyleRes(), typedValue, true);
-        int styleRes = typedValue.data;
         int argb = context.getColor(colorModel.getArgb());
-        GradientDrawable bgShape = (GradientDrawable) holder.ibColor.getBackground();
+        GradientDrawable bgShape = (GradientDrawable) holder.binding.ibColor.getBackground();
         bgShape.setColor(argb);
-        holder.ibColor.setOnClickListener(view -> {
+        holder.binding.ibColor.setOnClickListener(view -> {
             callback.onColorBtnClick(colorModel.getStyleRes());
         });
     }
@@ -62,11 +59,11 @@ public class MyColorAdapter extends RecyclerView.Adapter<MyColorAdapter.ColorVie
     }
 
     public static class ColorViewHolder extends RecyclerView.ViewHolder {
-        private final ImageButton ibColor;
+        private final ColorBtnLayoutBinding binding;
 
-        public ColorViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ibColor = itemView.findViewById(R.id.ib_color);
+        public ColorViewHolder(@NonNull ColorBtnLayoutBinding item) {
+            super(item.getRoot());
+            binding = item;
         }
     }
 }

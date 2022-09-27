@@ -2,23 +2,21 @@ package com.gmail.h1990.toshio.beanstalk.profile;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.STATUS_MESSAGE;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.BACKGROUND_PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +28,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.navigation.Navigation;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.databinding.FragmentProfileHomeBinding;
 import com.gmail.h1990.toshio.beanstalk.model.UserModel;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,20 +41,16 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class ProfileHomeFragment extends Fragment implements MenuProvider {
-    private TextView tvName;
-    private TextView tvStatusMessage;
+import java.util.Objects;
 
-    private ImageView ivProfile;
-    private ImageView ivBackgroundPhoto;
+public class ProfileHomeFragment extends Fragment implements MenuProvider {
+
     private FirebaseUser currentUser;
     private DatabaseReference databaseReferenceUser;
     private StorageReference storageRootRef;
-    private Button btLogout;
-
-    private Uri localFileUri;
     OnLogoutBtnClickListener callback;
     private static final String DIALOG_TAG = "message_display_fragment";
+    private FragmentProfileHomeBinding binding;
 
 
     public ProfileHomeFragment() {
@@ -76,7 +71,10 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        setupFirebase();
+    }
+
+    private void setupFirebase() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
         databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(USERS);
@@ -86,24 +84,31 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile_home, container, false);
+        binding = FragmentProfileHomeBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initView(view);
+
         setupStatusMessage();
         setProfile();
         MenuHost menuHost = requireActivity();
         menuHost.addMenuProvider(this, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-        btLogout.setOnClickListener(view1 -> {
+        binding.btLogout.setOnClickListener(view1 -> {
             if (callback != null) {
                 callback.onLogoutBtnClick();
             }
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 
     @Override
     public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
@@ -121,15 +126,15 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
     }
 
     private void setupStatusMessage() {
-        tvStatusMessage.setEms(12);
-        tvStatusMessage.setSingleLine(true);
-        tvStatusMessage.setSelected(true);
-        tvStatusMessage.setEllipsize(TextUtils.TruncateAt.END);
-        tvStatusMessage.setOnClickListener(view -> {
-            if (tvStatusMessage.length() > 0) {
+        binding.tvStatusMessage.setEms(12);
+        binding.tvStatusMessage.setSingleLine(true);
+        binding.tvStatusMessage.setSelected(true);
+        binding.tvStatusMessage.setEllipsize(TextUtils.TruncateAt.END);
+        binding.tvStatusMessage.setOnClickListener(view -> {
+            if (binding.tvStatusMessage.length() > 0) {
                 DialogFragment dialogFragment = new MessageDisplayFragment();
                 Bundle args = new Bundle();
-                String message = tvStatusMessage.getText().toString();
+                String message = binding.tvStatusMessage.getText().toString();
                 args.putString(STATUS_MESSAGE, message);
                 dialogFragment.setArguments(args);
                 dialogFragment.show(getParentFragmentManager(), DIALOG_TAG);
@@ -137,22 +142,14 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
         });
     }
 
-    private void initView(View view) {
-        tvName = view.findViewById(R.id.tv_name);
-        tvStatusMessage = view.findViewById(R.id.tv_status_message);
-        ivProfile = view.findViewById(R.id.iv_profile);
-        ivBackgroundPhoto = view.findViewById(R.id.iv_background_photo);
-        btLogout = view.findViewById(R.id.bt_logout);
-    }
-
     private void setProfile() {
         databaseReferenceUser.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 UserModel userModel = snapshot.getValue(UserModel.class);
-                GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile, ivProfile);
-                tvName.setText(currentUser.getDisplayName());
-                tvStatusMessage.setText(userModel.getStatusMessage());
+                GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile, binding.ivProfile);
+                binding.tvName.setText(currentUser.getDisplayName());
+                binding.tvStatusMessage.setText(Objects.requireNonNull(userModel).getStatusMessage());
                 setBackground();
             }
 
@@ -167,9 +164,9 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
         String photo = currentUser.getUid() + EXT_JPG;
         StorageReference fileRef =
                 storageRootRef.child(IMAGES_FOLDER).child(BACKGROUND_PHOTO).child(photo);
-        fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            GlideUtils.setPhoto(getContext(), uri, R.drawable.default_background, ivBackgroundPhoto);
-        }).addOnFailureListener(e -> {
-        });
+        fileRef.getDownloadUrl()
+                .addOnFailureListener(e -> Log.e(TAG, getString(R.string.failed_to_download_uri)))
+                .addOnSuccessListener(
+                        uri -> GlideUtils.setPhoto(getContext(), uri, R.drawable.default_background, binding.ivBackgroundPhoto));
     }
 }

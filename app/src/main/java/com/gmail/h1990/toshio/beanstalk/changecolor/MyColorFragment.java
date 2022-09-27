@@ -7,8 +7,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +24,7 @@ import com.gmail.h1990.toshio.beanstalk.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MyColorFragment extends DialogFragment implements MyColorAdapter.ColorBtnClickListener {
 
@@ -34,17 +38,6 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
         public void onPreferenceSaved();
     }
 
-    @Override
-    public void onColorBtnClick(@StyleRes int styleRes) {
-        SharedPreferences sharedPref = requireActivity().getSharedPreferences("theme", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(STYLE_RESOURCE, styleRes);
-        editor.commit();
-        callback.onPreferenceSaved();
-        dismiss();
-    }
-
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -54,6 +47,14 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
         setRecyclerView(view);
         builder.setView(view);
         return builder.create();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Objects.requireNonNull(getDialog()).getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        adjustDialogPosition();
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -66,6 +67,15 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
         }
     }
 
+    @Override
+    public void onColorBtnClick(@StyleRes int styleRes) {
+        SharedPreferences sharedPref = requireActivity().getSharedPreferences("theme", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(STYLE_RESOURCE, styleRes);
+        editor.apply();
+        callback.onPreferenceSaved();
+        dismiss();
+    }
 
     private void setRecyclerView(View view) {
         RecyclerView rvContainer = view.findViewById(R.id.rv_container);
@@ -73,12 +83,12 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rvContainer.setLayoutManager(manager);
-        RecyclerView.Adapter adapter = new MyColorAdapter(generateColorList(requireContext()),
+        RecyclerView.Adapter<MyColorAdapter.ColorViewHolder> adapter = new MyColorAdapter(generateColorList(),
                 requireActivity(), this);
         rvContainer.setAdapter(adapter);
     }
 
-    public List<ColorModel> generateColorList(Context context) {
+    public List<ColorModel> generateColorList() {
         List<ColorModel> colorModels = new ArrayList<>();
         colorModels.add(new ColorModel(R.color.magenta, R.style.Theme_BeansTalk));
         colorModels.add(new ColorModel(R.color.turquoise, R.style.Theme_BeansTalk_Turquoise));
@@ -88,5 +98,11 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
         return colorModels;
     }
 
-
+    private void adjustDialogPosition() {
+        WindowManager.LayoutParams params = Objects.requireNonNull(getDialog()).getWindow().getAttributes();
+        params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
+        params.verticalMargin = 0f;
+        params.horizontalMargin = 0f;
+        params.y = 300;
+    }
 }

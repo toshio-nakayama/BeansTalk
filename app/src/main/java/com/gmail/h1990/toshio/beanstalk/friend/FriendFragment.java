@@ -6,6 +6,9 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TIME_STAMP;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,11 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.databinding.FragmentFriendBinding;
 import com.gmail.h1990.toshio.beanstalk.model.FriendListModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,11 +37,10 @@ public class FriendFragment extends Fragment {
     RecyclerView rvFriendList;
     private FriendListAdapter friendListAdapter;
     private List<FriendListModel> friendModelList;
-    private DatabaseReference databaseReferenceTalk, databaseReferenceUsers;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser currentUser;
+    private DatabaseReference databaseReferenceUsers;
     private ChildEventListener childEventListener;
     private Query query;
+    private FragmentFriendBinding binding;
 
     public FriendFragment() {
     }
@@ -53,9 +52,10 @@ public class FriendFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_friend, container, false);
+        binding = FragmentFriendBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -69,10 +69,11 @@ public class FriendFragment extends Fragment {
         linearLayoutManager.setStackFromEnd(true);
         rvFriendList.setLayoutManager(linearLayoutManager);
         rvFriendList.setAdapter(friendListAdapter);
-        firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = currentUser = firebaseAuth.getCurrentUser();
+
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = currentUser = firebaseAuth.getCurrentUser();
         databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child(USERS);
-        databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK).child(currentUser.getUid());
+        DatabaseReference databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK).child(currentUser.getUid());
         query = databaseReferenceTalk.orderByChild(TIME_STAMP);
         childEventListener = new ChildEventListener() {
             @Override

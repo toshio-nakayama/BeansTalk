@@ -9,16 +9,13 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.databinding.TalkListLayoutBinding;
 import com.gmail.h1990.toshio.beanstalk.model.TalkListModel;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.storage.FirebaseStorage;
@@ -39,20 +36,23 @@ public class TalkListAdapter extends RecyclerView.Adapter<TalkListAdapter.TalkLi
     @NonNull
     @Override
     public TalkListAdapter.TalkListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.talk_list_layout, parent, false);
-        return new TalkListViewHolder(view);
+        TalkListLayoutBinding binding =
+                TalkListLayoutBinding.inflate(LayoutInflater.from(parent.getContext()), parent,
+                        false);
+        return new TalkListViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TalkListAdapter.TalkListViewHolder holder, int position) {
         TalkListModel talkListModel = talkListModelList.get(position);
-        holder.tvName.setText(talkListModel.getUserName());
+        holder.binding.tvName.setText(talkListModel.getUserName());
 
         StorageReference storageReference =
                 FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(talkListModel.getPhotoName());
-        storageReference.getDownloadUrl().addOnSuccessListener(uri -> GlideUtils.setPhoto(context, uri, R.drawable.default_profile, holder.ivProfile));
+        storageReference.getDownloadUrl().addOnSuccessListener(uri -> GlideUtils.setPhoto(context
+                , uri, R.drawable.default_profile, holder.binding.ivProfile));
 
-        holder.llTalkList.setOnClickListener(v -> {
+        holder.binding.llTalkList.setOnClickListener(v -> {
             Intent intent = new Intent(context, TalkActivity.class);
             intent.putExtra(USER_KEY, talkListModel.getUserId());
             intent.putExtra(USER_NAME, talkListModel.getUserName());
@@ -68,19 +68,12 @@ public class TalkListAdapter extends RecyclerView.Adapter<TalkListAdapter.TalkLi
     }
 
     public class TalkListViewHolder extends RecyclerView.ViewHolder {
-        private LinearLayout llTalkList;
-        private TextView tvName, tvLastMessage, tvTime, tvUnreadCount;
-        private ImageView ivProfile;
 
-        public TalkListViewHolder(@NonNull View itemView) {
-            super(itemView);
+        private TalkListLayoutBinding binding;
 
-            llTalkList = itemView.findViewById(R.id.ll_talk_list);
-            tvName = itemView.findViewById(R.id.tv_name);
-            tvLastMessage = itemView.findViewById(R.id.tv_last_message);
-            tvTime = itemView.findViewById(R.id.tv_time);
-            tvUnreadCount = itemView.findViewById(R.id.tv_unread_count);
-            ivProfile = itemView.findViewById(R.id.iv_profile);
+        public TalkListViewHolder(@NonNull TalkListLayoutBinding item) {
+            super(item.getRoot());
+            binding = item;
         }
     }
 }

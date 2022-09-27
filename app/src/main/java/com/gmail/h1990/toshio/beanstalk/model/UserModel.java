@@ -29,46 +29,7 @@ public class UserModel {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getStatusMessage() {
         return statusMessage;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public String getBackgroundPhoto() {
-        return backgroundPhoto;
-    }
-
-    public void setBackgroundPhoto(String backgroundPhoto) {
-        this.backgroundPhoto = backgroundPhoto;
-    }
-
-    @Override
-    public String toString() {
-        return "UserModel{" +
-                "name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", statusMessage='" + statusMessage + '\'' +
-                ", photo='" + photo + '\'' +
-                ", backgroundPhoto='" + backgroundPhoto + '\'' +
-                '}';
     }
 }

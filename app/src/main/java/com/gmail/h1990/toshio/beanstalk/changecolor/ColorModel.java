@@ -19,16 +19,8 @@ public class ColorModel {
         return argb;
     }
 
-    public void setArgb(int argb) {
-        this.argb = argb;
-    }
-
     public int getStyleRes() {
         return styleRes;
-    }
-
-    public void setStyleRes(int styleRes) {
-        this.styleRes = styleRes;
     }
 }
 

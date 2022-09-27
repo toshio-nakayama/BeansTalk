@@ -18,6 +18,7 @@ import com.gmail.h1990.toshio.beanstalk.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ReactionFragment extends DialogFragment implements ReactionAdapter.ReactionSelectedListener {
@@ -30,14 +31,14 @@ public class ReactionFragment extends DialogFragment implements ReactionAdapter.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Objects.requireNonNull(getDialog()).getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         return inflater.inflate(R.layout.fragment_reaction, container, false);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        selectedMessageId = getArguments().getString("messageId");
+        selectedMessageId = requireArguments().getString("messageId");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_reaction, null);
@@ -53,7 +54,7 @@ public class ReactionFragment extends DialogFragment implements ReactionAdapter.
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rvContainer.setLayoutManager(manager);
-        RecyclerView.Adapter adapter = new ReactionAdapter(generateReactionList(),
+        RecyclerView.Adapter<ReactionAdapter.ReactionViewHolder> adapter = new ReactionAdapter(generateReactionList(),
                 requireActivity(), selectedMessageId, this);
         rvContainer.setAdapter(adapter);
     }

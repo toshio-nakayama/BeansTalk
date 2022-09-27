@@ -91,21 +91,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
         android:background="@drawable/round_button_primary"
-        android:onClick="onLoginButtonClick"
         android:text="@string/login"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_password" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:minHeight="48dp"
-        android:onClick="onTextViewSignupClick"
         android:text="@string/new_registration"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textStyle="bold"

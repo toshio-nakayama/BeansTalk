@@ -3,14 +3,11 @@ package com.gmail.h1990.toshio.beanstalk.signup;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_URI_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,8 +30,6 @@ import com.gmail.h1990.toshio.beanstalk.databinding.ActivitySignupBinding;
 import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
 import com.gmail.h1990.toshio.beanstalk.model.UserModel;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -81,8 +76,6 @@ public class SignupActivity extends AppCompatActivity {
     private StorageReference storageRootRef;
     private Uri localFileUri;
     private FirebaseAuth firebaseAuth;
-    private SharedPreferences pref;
-
     private ActivitySignupBinding binding;
 
 
@@ -96,14 +89,18 @@ public class SignupActivity extends AppCompatActivity {
 
         initView();
         setupFirebase();
-        setupValidation();
-        pref = getPreferences(Context.MODE_PRIVATE);
+        validator = new Validator(this);
+        validation = new Validation(validator);
+        validator.setValidationListener(validation);
+        binding.btSignup.setOnClickListener(view1 -> onSignupBtnClick());
+        binding.btAddPhoto.setOnClickListener(view12 -> pickPhoto());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         validator = null;
+        binding = null;
     }
 
     private void initView() {
@@ -119,15 +116,9 @@ public class SignupActivity extends AppCompatActivity {
         databaseRootRef = FirebaseDatabase.getInstance().getReference();
     }
 
-    private void setupValidation() {
-        validator = new Validator(this);
-        validation = new Validation(validator);
-        validator.setValidationListener(validation);
-    }
-
-
-    public void pickUpImage(View view) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+    public void pickPhoto() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             activityResultLauncher.launch(intent);
         } else {
@@ -139,10 +130,9 @@ public class SignupActivity extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == RESULT_OK) {
-                            localFileUri = result.getData().getData();
+                            localFileUri = Objects.requireNonNull(result.getData()).getData();
                             binding.ivProfile.setImageURI(localFileUri);
                         }
-
                     });
 
     @Override
@@ -156,82 +146,61 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
-
     private void updateName() {
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .build();
-        currentUser.updateProfile(profileUpdates)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, getString(R.string.user_profile_updated));
-                    } else {
-                        Log.e(TAG, getString(R.string.failed_to_update));
-                    }
-                });
-    }
-
-
-    private void updatePhoto() {
-        String photo = currentUser.getUid() + EXT_JPG;
-        StorageReference fileRef =
-                storageRootRef.child(IMAGES_FOLDER).child(PHOTO).child(photo);
-        UploadTask uploadTask = fileRef.putFile(localFileUri);
-        Task<Uri> urlTask = uploadTask.continueWithTask((Continuation<UploadTask.TaskSnapshot, Task<Uri>>) task -> {
-            if (!task.isSuccessful()) {
-                throw Objects.requireNonNull(task.getException());
-            }
-            return fileRef.getDownloadUrl();
-        }).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Uri uri = task.getResult();
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString(PHOTO_URI_KEY, uri.getPath());
-                editor.commit();
-                UserProfileChangeRequest profileUpdates =
-                        new UserProfileChangeRequest.Builder().setPhotoUri(uri).build();
-                currentUser.updateProfile(profileUpdates).addOnCompleteListener(task1 -> {
-                });
-            }
-        });
-    }
-
-    private void writeNewUser() {
-        String userId = currentUser.getUid();
-        String photo = pref.getString(PHOTO_URI_KEY, "");
-        SharedPreferences.Editor editor = pref.edit();
-        editor.remove(PHOTO_URI_KEY);
-        editor.commit();
-        String statusMessage = "";
-        String backgroundPhoto = "";
-        UserModel userModel = new UserModel(name, email, statusMessage, photo, backgroundPhoto);
-        databaseRootRef.child(USERS).child(userId).setValue(userModel).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+        currentUser.updateProfile(profileUpdates).addOnSuccessListener(unused -> {
+            String userId = currentUser.getUid();
+            final DatabaseReference databaseReferenceUser = databaseRootRef.child(USERS);
+            UserModel userModel = new UserModel(name, email, "", "", "");
+            databaseReferenceUser.child(userId).setValue(userModel).addOnSuccessListener(unused1 -> {
                 Toast toast = Toast.makeText(SignupActivity.this, R.string.signup_successfully,
                         Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
                 startActivity(new Intent(SignupActivity.this, LoginActivity.class));
-            }
+            });
         });
     }
 
 
-    public void onSignupButtonClick(View view) {
+    private void updateNameAndPhoto() {
+        String photo = currentUser.getUid() + EXT_JPG;
+        final StorageReference fileRef = storageRootRef.child(IMAGES_FOLDER).child(PHOTO).child(photo);
+        UploadTask uploadTask = fileRef.putFile(localFileUri);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                UserProfileChangeRequest profileUpdates =
+                        new UserProfileChangeRequest.Builder().setDisplayName(name).setPhotoUri(uri).build();
+                currentUser.updateProfile(profileUpdates).addOnSuccessListener(unused -> {
+                    String userId = currentUser.getUid();
+                    final DatabaseReference databaseReferenceUser = databaseRootRef.child(USERS);
+                    UserModel userModel = new UserModel(name, email, "", uri.getPath(), "");
+                    databaseReferenceUser.child(userId).setValue(userModel).addOnSuccessListener(unused1 -> {
+                        Toast toast = Toast.makeText(SignupActivity.this, R.string.signup_successfully,
+                                Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                        startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+                    });
+                });
+            });
+        });
+    }
+
+    public void onSignupBtnClick() {
         name = validation.trimAndNormalize(etName.getText().toString());
         email = validation.trimAndNormalize(etEmail.getText().toString());
         String password = validation.trimAndNormalize(etPassword.getText().toString());
-        String confirmPassword = validation.trimAndNormalize(etConfirmPassword.getText().toString());
         if (validation.validate()) {
-            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, getString(R.string.create_user_success));
-                    currentUser = firebaseAuth.getCurrentUser();
-                    if (localFileUri != null) {
-                        updatePhoto();
-                    }
+            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnFailureListener(e -> {
+                Log.e(TAG, getString(R.string.signup_failed));
+            }).addOnSuccessListener(authResult -> {
+                Log.d(TAG, getString(R.string.create_user_success));
+                currentUser = firebaseAuth.getCurrentUser();
+                if (localFileUri != null) {
+                    updateNameAndPhoto();
+                } else {
                     updateName();
-                    writeNewUser();
                 }
             });
         }

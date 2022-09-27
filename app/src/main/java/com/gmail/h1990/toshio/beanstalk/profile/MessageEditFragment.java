@@ -7,7 +7,6 @@ import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.CONTENTS;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.EDIT_TYPE;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.REQUEST_KEY;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.STATUS_MESSAGE;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
@@ -37,6 +36,8 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.MessageFormat;
+
 public class MessageEditFragment extends DialogFragment {
     private EditText etInput;
     private TextView tvWordCount;
@@ -44,11 +45,16 @@ public class MessageEditFragment extends DialogFragment {
     private Button btSave;
     private int editType;
     private FirebaseUser currentUser;
-    private DatabaseReference databaseRootRef, currentUserRef;
+    private DatabaseReference currentUserRef;
 
     public MessageEditFragment() {
     }
 
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        return super.onCreateDialog(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,16 +70,11 @@ public class MessageEditFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseRootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
         currentUserRef = databaseRootRef.child(USERS).child(currentUser.getUid());
         initView();
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        return super.onCreateDialog(savedInstanceState);
-    }
 
     @Override
     public void onStart() {
@@ -81,23 +82,16 @@ public class MessageEditFragment extends DialogFragment {
         getParentFragmentManager().setFragmentResultListener(REQUEST_KEY, this,
                 (requestKey, result) -> {
                     editType = result.getInt(EDIT_TYPE);
-                    switch (editType) {
-                        case 0:
-                            setupInputBasedOnName();
-                            break;
-                        case 1:
-                            setupInputBasedOnStatusMessage();
-                            break;
+                    if (editType == 0) {
+                        setupInputBasedOnName();
+                    } else if (editType == 1) {
+                        setupInputBasedOnStatusMessage();
                     }
                     String contents = result.getString(CONTENTS);
                     etInput.setText(contents);
                 });
-        ibClose.setOnClickListener(view -> {
-            dismiss();
-        });
-        btSave.setOnClickListener(view -> {
-            onBtnSaveClick();
-        });
+        ibClose.setOnClickListener(view -> dismiss());
+        btSave.setOnClickListener(view -> onBtnSaveClick());
     }
 
     private void initView() {
@@ -126,10 +120,12 @@ public class MessageEditFragment extends DialogFragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 String name = editable.toString();
-                tvWordCount.setText(new StringBuilder().append(name.length()).append("/").append(MAX_LENGTH_NAME).toString());
+                tvWordCount.setText(MessageFormat.format("{0}/{1}", name.length(), MAX_LENGTH_NAME));
                 if (name.length() < MIN_LENGTH_NAME) {
-                    etInput.setError(getString(R.string.less_characters_warning,
-                            String.valueOf(MIN_LENGTH_NAME)));
+                    if (isAdded()) {
+                        etInput.setError(getString(R.string.less_characters_warning,
+                                String.valueOf(MIN_LENGTH_NAME)));
+                    }
                     btSave.setEnabled(false);
                 } else {
                     etInput.setError(null);
@@ -156,24 +152,18 @@ public class MessageEditFragment extends DialogFragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 String statusMessage = editable.toString();
-                tvWordCount.setText(new StringBuilder().append(statusMessage.length()).append("/")
-                        .append(MAX_LENGTH_STATUS_MESSAGE).toString());
+                tvWordCount.setText(MessageFormat.format("{0}/{1}", statusMessage.length(), MAX_LENGTH_STATUS_MESSAGE));
             }
         });
     }
 
     private void onBtnSaveClick() {
-        switch (editType) {
-            case 0:
-                updateName();
-                dismiss();
-                break;
-            case 1:
-                updateStatusMessage();
-                dismiss();
-                break;
-            default:
-                break;
+        if (editType == 0) {
+            updateName();
+            dismiss();
+        } else if (editType == 1) {
+            updateStatusMessage();
+            dismiss();
         }
     }
 
@@ -181,22 +171,24 @@ public class MessageEditFragment extends DialogFragment {
         String name = etInput.getText().toString().trim();
         UserProfileChangeRequest profileUpdates =
                 new UserProfileChangeRequest.Builder().setDisplayName(name).build();
-        currentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                currentUserRef.child(NAME).setValue(name).addOnCompleteListener(task1 -> {
-                    Log.d(TAG, getString(R.string.user_profile_updated));
-                });
-            } else {
-                Log.e(TAG, getString(R.string.failed_to_update));
-            }
-        });
-
+        currentUser.updateProfile(profileUpdates).addOnSuccessListener(
+                unused -> currentUser.updateProfile(profileUpdates).addOnFailureListener(e -> {
+                    if (isAdded())
+                        Log.e(TAG, getString(R.string.failed_to_update));
+                }).addOnSuccessListener(unused1 -> {
+                    if (isAdded())
+                        Log.d(TAG, getString(R.string.user_profile_updated));
+                }));
     }
 
     private void updateStatusMessage() {
         String statusMessage = etInput.getText().toString().trim();
-        currentUserRef.child(STATUS_MESSAGE).setValue(statusMessage).addOnCompleteListener(task -> {
-
+        currentUserRef.child(STATUS_MESSAGE).setValue(statusMessage).addOnFailureListener(e -> {
+            if (isAdded())
+                Log.e(TAG, getString(R.string.failed_to_update));
+        }).addOnSuccessListener(unused -> {
+            if (isAdded())
+                Log.d(TAG, getString(R.string.user_profile_updated));
         });
     }
 }

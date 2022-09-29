@@ -4,7 +4,9 @@ import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.BACKGROUND_PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.databinding.ActivityFriendProfileBinding;
+import com.gmail.h1990.toshio.beanstalk.model.UserModel;
 import com.gmail.h1990.toshio.beanstalk.talk.TalkActivity;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +34,8 @@ public class FriendProfileActivity extends AppCompatActivity {
     private String friendUserId;
     private String friendUserName;
     private String friendUserPhotoName;
+    private DatabaseReference databaseRootRef;
+    private StorageReference storageRootRef;
     private ActivityFriendProfileBinding binding;
 
 
@@ -46,7 +51,7 @@ public class FriendProfileActivity extends AppCompatActivity {
         setupFirebase();
         setProfile();
         binding.tvStatusMessage.setSelected(true);
-        binding.btTalk.setOnClickListener(view1 -> {
+        binding.ibTalk.setOnClickListener(view1 -> {
             Intent intent = new Intent(this, TalkActivity.class);
             intent.putExtra(USER_KEY, friendUserId);
             intent.putExtra(USER_NAME, friendUserName);
@@ -54,13 +59,15 @@ public class FriendProfileActivity extends AppCompatActivity {
             startActivity(intent);
         });
         Toolbar toolbar = binding.toolbar;
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupFirebase() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
+        databaseRootRef = FirebaseDatabase.getInstance().getReference();
+        storageRootRef = FirebaseStorage.getInstance().getReference();
     }
 
     private void acceptData() {
@@ -77,12 +84,21 @@ public class FriendProfileActivity extends AppCompatActivity {
 
     private void setProfile() {
         binding.tvName.setText(friendUserName);
-        binding.tvStatusMessage.setText("");
-        StorageReference storageReference =
-                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(friendUserPhotoName);
-        storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
-            GlideUtils.setPhoto(this, uri, R.drawable.default_profile, binding.ivProfile);
+        final DatabaseReference databaseReferenceFriend = databaseRootRef.child(USERS).child(friendUserId);
+        databaseReferenceFriend.get().addOnSuccessListener(dataSnapshot -> {
+            UserModel userModel = dataSnapshot.getValue(UserModel.class);
+            binding.tvStatusMessage.setText(Objects.requireNonNull(userModel).getStatusMessage());
         });
+        StorageReference photoReference =
+                storageRootRef.child(IMAGES_FOLDER).child(PHOTO).child(friendUserPhotoName);
+        photoReference.getDownloadUrl().addOnSuccessListener(uri -> {
+            GlideUtils.setPhoto(FriendProfileActivity.this, uri, R.drawable.default_profile, binding.ivProfile);
+        });
+        StorageReference backgroundPhotoReference =
+                storageRootRef.child(IMAGES_FOLDER).child(BACKGROUND_PHOTO).child(friendUserPhotoName);
+        backgroundPhotoReference.getDownloadUrl().addOnSuccessListener(
+                uri -> GlideUtils.setPhoto(FriendProfileActivity.this, uri, R.drawable.default_background,
+                        binding.ivBackgroundPhoto));
 
     }
 

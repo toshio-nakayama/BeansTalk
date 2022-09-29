@@ -48,7 +48,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        binding.ivFloat.startAnimation(animation);
+        binding.llLogo.startAnimation(animation);
     }
 
     @Override

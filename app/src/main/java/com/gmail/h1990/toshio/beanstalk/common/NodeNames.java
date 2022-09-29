@@ -18,4 +18,5 @@ public class NodeNames {
     public static final String MESSAGE_TIME = "messageTime";
     public static final String REACTION_STATUS = "reactionStatus";
 
+    public static final String UNREAD_COUNT = "unreadCount";
 }

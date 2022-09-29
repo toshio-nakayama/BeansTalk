@@ -48,7 +48,9 @@ public class ReactionAdapter extends RecyclerView.Adapter<ReactionAdapter.Reacti
         holder.binding.ibReaction.setBackground(reactionModel.getGraphics());
         holder.binding.ibReaction.setOnClickListener(view -> {
             ((TalkActivity) context).sendReaction(selectedMessageId, reactionModel.getReactionState());
-            callback.onReactionSelected();
+            if (callback != null) {
+                callback.onReactionSelected();
+            }
         });
 
     }

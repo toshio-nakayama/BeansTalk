@@ -38,7 +38,6 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-
                 tools:text="Name" />
 
             <TextView
@@ -47,8 +46,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
-
-                tools:text="Last Message" />
+                android:textColor="@color/white"
+                tools:text="Status Message" />
 
         </LinearLayout>
 

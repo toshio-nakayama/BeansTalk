@@ -1,6 +1,7 @@
 package com.gmail.h1990.toshio.beanstalk.changecolor;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.STYLE_RESOURCE;
+import static com.gmail.h1990.toshio.beanstalk.common.Extras.THEME;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,6 +31,10 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
 
     private PreferenceSavedListener callback;
     public static final String DIALOG_TAG = "dialog_color_selection";
+    private static final Float INITIAL_VERTICAL_MARGIN = 0f;
+    private static final Float INITIAL_HORIZONTAL_MARGIN = 0f;
+    private static final int POSITION_Y = 300;
+
 
     public MyColorFragment() {
     }
@@ -69,11 +74,14 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
 
     @Override
     public void onColorBtnClick(@StyleRes int styleRes) {
-        SharedPreferences sharedPref = requireActivity().getSharedPreferences("theme", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = requireActivity().getSharedPreferences(THEME,
+                Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(STYLE_RESOURCE, styleRes);
         editor.apply();
-        callback.onPreferenceSaved();
+        if (callback != null) {
+            callback.onPreferenceSaved();
+        }
         dismiss();
     }
 
@@ -101,8 +109,8 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
     private void adjustDialogPosition() {
         WindowManager.LayoutParams params = Objects.requireNonNull(getDialog()).getWindow().getAttributes();
         params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
-        params.verticalMargin = 0f;
-        params.horizontalMargin = 0f;
-        params.y = 300;
+        params.verticalMargin = INITIAL_VERTICAL_MARGIN;
+        params.horizontalMargin = INITIAL_HORIZONTAL_MARGIN;
+        params.y = POSITION_Y;
     }
 }

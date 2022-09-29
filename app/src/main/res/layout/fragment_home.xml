@@ -18,6 +18,7 @@
         android:orientation="horizontal"
         android:weightSum="1">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,17 +32,17 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
-
                 android:textStyle="bold"
                 tools:text="Name" />
 
             <TextView
-                android:id="@+id/status_message"
+                android:id="@+id/tv_status_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-
+                android:textColor="@color/white"
                 tools:text="Status Message" />
+
         </LinearLayout>
 
         <com.mikhaellopez.circularimageview.CircularImageView

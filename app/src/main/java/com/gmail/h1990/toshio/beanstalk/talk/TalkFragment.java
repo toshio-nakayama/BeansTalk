@@ -1,8 +1,10 @@
 package com.gmail.h1990.toshio.beanstalk.talk;
 
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TIME_STAMP;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.UNREAD_COUNT;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
 import android.os.Bundle;
@@ -35,6 +37,7 @@ import java.util.Optional;
 public class TalkFragment extends Fragment {
     private TalkListAdapter talkListAdapter;
     private List<TalkListModel> talkListModelList;
+    private List<String> userIds;
     private DatabaseReference databaseReferenceTalk, databaseReferenceUsers;
     private ChildEventListener childEventListener;
     private Query query;
@@ -74,6 +77,7 @@ public class TalkFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupFirebase();
+        userIds = new ArrayList<>();
         talkListModelList = new ArrayList<>();
         talkListAdapter = new TalkListAdapter(getActivity(), talkListModelList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -90,7 +94,7 @@ public class TalkFragment extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                updateList(snapshot, false, snapshot.getKey());
             }
 
             @Override
@@ -115,7 +119,8 @@ public class TalkFragment extends Fragment {
         String lastMessage, time, unreadCount;
         lastMessage = "";
         time = "";
-        unreadCount = "";
+        unreadCount = dataSnapshot.child(UNREAD_COUNT).getValue() == null ? "0" :
+                dataSnapshot.child(UNREAD_COUNT).getValue().toString();
         databaseReferenceUsers.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -127,10 +132,16 @@ public class TalkFragment extends Fragment {
                 } else {
                     name = "";
                 }
-                String photoName = userId + ".jpg";
+                String photoName = userId + EXT_JPG;
                 TalkListModel talkListModel = new TalkListModel(userId, name, photoName,
                         unreadCount, lastMessage, time);
-                talkListModelList.add(talkListModel);
+                if (isNew) {
+                    talkListModelList.add(talkListModel);
+                    userIds.add(userId);
+                } else {
+                    int indexOfClickedUser = userIds.indexOf(userId);
+                    talkListModelList.set(indexOfClickedUser, talkListModel);
+                }
                 talkListAdapter.notifyDataSetChanged();
             }
 

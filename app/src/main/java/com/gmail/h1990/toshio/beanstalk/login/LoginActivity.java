@@ -28,10 +28,10 @@ import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 
 public class LoginActivity extends AppCompatActivity implements MyColorFragment.PreferenceSavedListener {
-    @NotEmpty
+    @NotEmpty(message = "必須項目です。入力をお願いします")
     private EditText etEmail;
 
-    @NotEmpty
+    @NotEmpty(message = "必須項目です。入力をお願いします")
     private EditText etPassword;
 
     private Validation validation;

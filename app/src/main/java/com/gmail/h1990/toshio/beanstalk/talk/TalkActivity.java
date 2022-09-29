@@ -2,7 +2,6 @@ package com.gmail.h1990.toshio.beanstalk.talk;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.MESSAGE_TYPE_TEXT;
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE;
@@ -12,6 +11,8 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_ID;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_TIME;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.MESSAGE_TYPE;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.REACTION_STATUS;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.UNREAD_COUNT;
 import static com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment.DIALOG_TAG;
 
 import android.os.Bundle;
@@ -31,11 +32,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
+import com.gmail.h1990.toshio.beanstalk.common.Extras;
 import com.gmail.h1990.toshio.beanstalk.databinding.ActivityTalkBinding;
 import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionState;
 import com.gmail.h1990.toshio.beanstalk.util.NetworkChecker;
+import com.gmail.h1990.toshio.beanstalk.util.TalkUtil;
 import com.gmail.h1990.toshio.beanstalk.util.Validation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -85,6 +88,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
         binding.rvMessages.setLayoutManager(new LinearLayoutManager(this));
         binding.rvMessages.setAdapter(messagesAdapter);
         loadMessages();
+        rootReference.child(TALK).child(currentUserId).child(talkUserId).child(UNREAD_COUNT).setValue(0);
         binding.rvMessages.scrollToPosition(messageList.size() - 1);
         binding.srlMessages.setOnRefreshListener(() -> {
             currentPage++;
@@ -112,9 +116,6 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
         if (getIntent().hasExtra(USER_NAME)) {
             talkUserName = getIntent().getStringExtra(USER_NAME);
         }
-        if (getIntent().hasExtra(PHOTO_NAME)) {
-            String talkUserPhotoName = getIntent().getStringExtra(PHOTO_NAME);
-        }
     }
 
     private void setupToolBar(String userName) {
@@ -133,7 +134,6 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         validator = null;
-        binding = null;
     }
 
     @Override
@@ -183,6 +183,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                         Log.e(TAG, getString(R.string.failed_to_send_message) + error.getMessage());
                     } else {
                         Log.d(TAG, getString(R.string.message_sent_successfully));
+                        TalkUtil.updateTalkDetails(TalkActivity.this, currentUserId, talkUserId);
                     }
                 });
             }
@@ -246,6 +247,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                     databaseRefTalkUser.child(REACTION_STATUS).setValue(flagSetValue1)
                             .addOnFailureListener(e -> Log.e(TAG, e.getMessage()))
                             .addOnSuccessListener(unused1 -> {
+                                loadMessages();
                             });
                 });
             });
@@ -256,10 +258,14 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     public void generateReactionDialog(String selectedMessageId) {
         DialogFragment dialogFragment = new ReactionFragment();
         Bundle args = new Bundle();
-        args.putString("messageId", selectedMessageId);
+        args.putString(Extras.MESSAGE_ID, selectedMessageId);
         dialogFragment.setArguments(args);
         dialogFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        rootReference.child(TALK).child(currentUserId).child(talkUserId).child(UNREAD_COUNT).setValue(0);
+        super.onBackPressed();
+    }
 }

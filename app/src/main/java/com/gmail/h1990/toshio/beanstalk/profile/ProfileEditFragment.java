@@ -10,6 +10,7 @@ import static com.gmail.h1990.toshio.beanstalk.common.Extras.REQUEST_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.BACKGROUND_PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
+import static com.gmail.h1990.toshio.beanstalk.profile.MessageEditFragment.DIALOG_TAG;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -51,7 +52,6 @@ public class ProfileEditFragment extends Fragment {
     private DatabaseReference currentUserRef;
     private StorageReference storageRootRef;
     private ValueEventListener valueEventListener;
-    private static final String DIALOG_TAG = "message_edit_fragment";
     private FragmentProfileEditBinding binding;
 
 

@@ -46,6 +46,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
     public void onBindViewHolder(@NonNull FriendListViewHolder holder, int position) {
         FriendListModel friendListModel = friendModelList.get(position);
         holder.binding.tvName.setText(friendListModel.getUserName());
+        holder.binding.tvStatusMessage.setText(friendListModel.getStatusMessage());
         StorageReference storageReference =
                 FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(friendListModel.getPhotoName());
         storageReference.getDownloadUrl().addOnSuccessListener(uri -> {

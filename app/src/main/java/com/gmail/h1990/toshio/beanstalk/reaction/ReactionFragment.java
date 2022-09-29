@@ -1,5 +1,7 @@
 package com.gmail.h1990.toshio.beanstalk.reaction;
 
+import static com.gmail.h1990.toshio.beanstalk.common.Extras.MESSAGE_ID;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -38,7 +40,7 @@ public class ReactionFragment extends DialogFragment implements ReactionAdapter.
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        selectedMessageId = requireArguments().getString("messageId");
+        selectedMessageId = requireArguments().getString(MESSAGE_ID);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_reaction, null);

@@ -30,6 +30,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     private final Context context;
     private final List<MessageModel> messageModelList;
     private ConstraintLayout selectedView;
+    private static final String FORMAT_PATTERN = "dd-MM-yyyy HH:mm";
 
     public MessagesAdapter(Context context, List<MessageModel> messageModelList) {
         this.context = context;
@@ -52,7 +53,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         String currentUserId = firebaseAuth.getCurrentUser().getUid();
         String fromUserId = messageModel.getMessageFrom();
-        String messageTime = strDateFormat(messageModel.getMessageTime(), "dd-MM-yyyy HH:mm");
+        String messageTime = strDateFormat(messageModel.getMessageTime(), FORMAT_PATTERN);
         if (fromUserId.equals(currentUserId)) {
             setSentMessage(holder, messageModel.getMessage(), messageTime);
             setReceivedReaction(holder, messageModel.getReactionStatus());

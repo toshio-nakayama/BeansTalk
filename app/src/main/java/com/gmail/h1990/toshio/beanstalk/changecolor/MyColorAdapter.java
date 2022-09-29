@@ -49,7 +49,9 @@ public class MyColorAdapter extends RecyclerView.Adapter<MyColorAdapter.ColorVie
         GradientDrawable bgShape = (GradientDrawable) holder.binding.ibColor.getBackground();
         bgShape.setColor(argb);
         holder.binding.ibColor.setOnClickListener(view -> {
-            callback.onColorBtnClick(colorModel.getStyleRes());
+            if (callback != null) {
+                callback.onColorBtnClick(colorModel.getStyleRes());
+            }
         });
     }
 

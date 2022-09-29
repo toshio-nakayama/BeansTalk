@@ -31,4 +31,8 @@ public class TalkListModel {
     public String getPhotoName() {
         return photoName;
     }
+
+    public String getUnreadCount() {
+        return unreadCount;
+    }
 }

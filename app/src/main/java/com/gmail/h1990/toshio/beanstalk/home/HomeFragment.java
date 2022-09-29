@@ -5,15 +5,17 @@ import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -30,6 +32,7 @@ import androidx.navigation.Navigation;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.addfriend.AddFriendActivity;
 import com.gmail.h1990.toshio.beanstalk.databinding.FragmentHomeBinding;
+import com.gmail.h1990.toshio.beanstalk.model.UserModel;
 import com.gmail.h1990.toshio.beanstalk.profile.ProfileActivity;
 import com.gmail.h1990.toshio.beanstalk.qrcode.QRScanActivity;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
@@ -43,10 +46,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
-public class HomeFragment extends Fragment implements View.OnTouchListener, MenuProvider {
+public class HomeFragment extends Fragment implements MenuProvider {
     private FirebaseUser currentUser;
     private DatabaseReference databaseReferenceTalk, databaseReferenceUser;
     private FragmentHomeBinding binding;
+    private static final int MENU_POSITION = 0;
+    private static final int SUBMENU_POSITION = 0;
 
     public HomeFragment() {
     }
@@ -55,6 +60,16 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupFirebase();
+    }
+
+    private void setProfile() {
+        binding.tvName.setText(currentUser.getDisplayName());
+        databaseReferenceUser.child(currentUser.getUid()).get().addOnSuccessListener(dataSnapshot -> {
+            UserModel userModel = dataSnapshot.getValue(UserModel.class);
+            binding.tvStatusMessage.setText(userModel.getStatusMessage());
+        });
+        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile,
+                binding.ivProfile);
     }
 
     private void setupFirebase() {
@@ -72,7 +87,6 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
         return view;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -81,10 +95,10 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
             Navigation.findNavController(view).navigate(R.id.friendFragment);
         });
         setFriendsCount();
-        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile,
-                binding.ivProfile);
-        binding.tvName.setText(currentUser.getDisplayName());
-        binding.ivProfile.setOnTouchListener(HomeFragment.this);
+        setProfile();
+        binding.llProfile.setOnClickListener(view1 -> {
+            startActivity(new Intent(getActivity(), ProfileActivity.class));
+        });
         MenuHost menuHost = requireActivity();
         menuHost.addMenuProvider(this, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
@@ -92,6 +106,10 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
     @Override
     public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.menu_home, menu);
+        SubMenu subMenu = (SubMenu) menu.getItem(MENU_POSITION).getSubMenu();
+        SpannableString s = new SpannableString(getString(R.string.qr_code));
+        s.setSpan(new ForegroundColorSpan(Color.BLACK), 0, s.length(), 0);
+        subMenu.getItem(SUBMENU_POSITION).setTitle(s);
     }
 
     @Override
@@ -102,19 +120,6 @@ public class HomeFragment extends Fragment implements View.OnTouchListener, Menu
             return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                startActivity(new Intent(getActivity(), ProfileActivity.class));
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                break;
-        }
-        return false;
     }
 
     private void setFriendsCount() {

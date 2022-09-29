@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/circle.xml" value="0.1625" />
         <entry key="app/src/main/res/drawable-v24/input_field.xml" value="0.1625" />
+        <entry key="app/src/main/res/drawable/app_icon_background.xml" value="0.221" />
         <entry key="app/src/main/res/drawable/bottom_navigation_item_state.xml" value="0.1045" />
         <entry key="app/src/main/res/drawable/bubble_a.xml" value="0.1625" />
         <entry key="app/src/main/res/drawable/bubble_b.xml" value="0.1625" />
@@ -26,7 +27,9 @@
         <entry key="app/src/main/res/drawable/ic_exit.xml" value="0.1625" />
         <entry key="app/src/main/res/drawable/ic_home.xml" value="0.1195" />
         <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.173" />
+        <entry key="app/src/main/res/drawable/ic_person_add.xml" value="0.2265" />
         <entry key="app/src/main/res/drawable/ic_person_focused.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_qr_code.xml" value="0.2265" />
         <entry key="app/src/main/res/drawable/incoming_bubble.xml" value="0.1495" />
         <entry key="app/src/main/res/drawable/mycolor_button.xml" value="0.1495" />
         <entry key="app/src/main/res/drawable/outgoing_bubble.xml" value="0.1495" />
@@ -46,6 +49,7 @@
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.2453125" />
         <entry key="app/src/main/res/layout/activity_talk.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/app_logo_layout.xml" value="0.2861111111111111" />
+        <entry key="app/src/main/res/layout/app_logo_layout2.xml" value="0.23731884057971014" />
         <entry key="app/src/main/res/layout/color_btn_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/color_list_layout.xml" value="0.22282608695652173" />
         <entry key="app/src/main/res/layout/custom_barcode_scanner.xml" value="0.10833333333333334" />
@@ -53,7 +57,7 @@
         <entry key="app/src/main/res/layout/custom_progressbar.xml" value="0.192481884057971" />
         <entry key="app/src/main/res/layout/fragment_color_selection.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_friend.xml" value="0.10729166666666666" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.10729166666666666" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_message_display.xml" value="0.2453125" />
         <entry key="app/src/main/res/layout/fragment_message_edit.xml" value="0.125" />
         <entry key="app/src/main/res/layout/fragment_my_color.xml" value="0.22282608695652173" />

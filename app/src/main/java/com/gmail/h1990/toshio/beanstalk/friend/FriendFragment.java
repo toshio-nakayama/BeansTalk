@@ -1,6 +1,8 @@
 package com.gmail.h1990.toshio.beanstalk.friend;
 
+import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.NAME;
+import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.STATUS_MESSAGE;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TIME_STAMP;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
@@ -78,7 +80,7 @@ public class FriendFragment extends Fragment {
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                updateList(snapshot, true, snapshot.getKey());
+                updateList(snapshot, snapshot.getKey());
             }
 
             @Override
@@ -104,21 +106,23 @@ public class FriendFragment extends Fragment {
         query.addChildEventListener(childEventListener);
     }
 
-    private void updateList(DataSnapshot dataSnapshot, boolean isNew, String userId) {
-        String statusMessage;
-        statusMessage = "";
+    private void updateList(DataSnapshot dataSnapshot, String userId) {
         databaseReferenceUsers.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = null;
-                Optional<Object> opt1 =
+                String name = "";
+                Optional<Object> opt =
                         Optional.ofNullable(snapshot.child(NAME).getValue());
-                if (opt1.isPresent()) {
+                if (opt.isPresent()) {
                     name = snapshot.child(NAME).getValue().toString();
-                } else {
-                    name = "";
                 }
-                String photoName = userId + ".jpg";
+                String statusMessage = "";
+                Optional<Object> opt1 =
+                        Optional.ofNullable(snapshot.child(STATUS_MESSAGE).getValue());
+                if (opt1.isPresent()) {
+                    statusMessage = snapshot.child(STATUS_MESSAGE).getValue().toString();
+                }
+                String photoName = userId + EXT_JPG;
                 FriendListModel friendListModel = new FriendListModel(userId, name,
                         statusMessage, photoName);
                 friendModelList.add(friendListModel);

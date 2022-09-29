@@ -44,6 +44,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:drawablePadding="12dp"
+            android:elevation="20dp"
             android:gravity="center|center_vertical"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
@@ -55,30 +56,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:elevation="20dp"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:gravity="center|center_vertical"
             android:marqueeRepeatLimit="marquee_forever"
             android:maxLines="1"
-            android:textColor="@color/white"
             android:scrollHorizontally="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/white"
             tools:text="@string/status_message" />
 
-        <Button
-            android:id="@+id/bt_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/ib_logout"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_gravity="center"
             android:layout_marginTop="64dp"
-            android:background="@drawable/round_button"
-            android:backgroundTint="@android:color/background_dark"
-            android:drawableTop="@drawable/ic_exit"
+            android:background="@drawable/ic_exit"
+            android:elevation="20dp"
+            android:gravity="center"
+            android:scaleType="fitCenter"
+            app:backgroundTint="@null"
+            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/tv_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="20dp"
             android:gravity="center"
             android:text="@string/logout"
-
-            android:textSize="11sp"
-            app:backgroundTint="@null" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@color/white" />
 
     </LinearLayout>
 

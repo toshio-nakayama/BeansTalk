@@ -57,7 +57,7 @@ public class AddFriendActivity extends AppCompatActivity {
         setupFirebase();
         setProfile();
         binding.ibClose.setOnClickListener(view1 -> finish());
-        binding.btAdd.setOnClickListener(view2 -> onAddBtnClick());
+        binding.ibAdd.setOnClickListener(view2 -> onAddBtnClick());
     }
 
     private void setupFirebase() {

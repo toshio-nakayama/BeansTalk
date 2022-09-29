@@ -15,6 +15,7 @@ import com.gmail.h1990.toshio.beanstalk.databinding.FragmentMessageDisplayBindin
 public class MessageDisplayFragment extends DialogFragment {
 
     private FragmentMessageDisplayBinding binding;
+    public static final String DIALOG_TAG = "message_display_fragment";
 
 
     public MessageDisplayFragment() {

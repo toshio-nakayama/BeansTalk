@@ -19,7 +19,7 @@
     <string name="talk">トーク</string>
     <string name="friend_list">ともだちリスト</string>
     <string name="add">追加</string>
-    <string name="qr_scan">QRコードスキャン</string>
+    <string name="qr_code">QRコード</string>
     <string name="unexpected_value">"Unexpected value: "</string>
     <string name="status_message">ステータスメッセージ</string>
     <string name="logout">ログアウト</string>
@@ -43,4 +43,6 @@
     <string name="failed_to_get_data">Failed to get data.</string>
     <string name="failed_to_upload_file">Failed to upload file.</string>
     <string name="signup_failed">Signup failed.</string>
+    <string name="add_friend">ともだち追加</string>
+
 </resources>

@@ -28,5 +28,8 @@ public class FriendListModel {
         return photoName;
     }
 
+    public String getStatusMessage() {
+        return statusMessage;
+    }
 }
 

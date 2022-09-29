@@ -46,6 +46,7 @@ public class MessageEditFragment extends DialogFragment {
     private int editType;
     private FirebaseUser currentUser;
     private DatabaseReference currentUserRef;
+    public static final String DIALOG_TAG = "message_edit_fragment";
 
     public MessageEditFragment() {
     }
@@ -140,6 +141,8 @@ public class MessageEditFragment extends DialogFragment {
         InputFilter[] filters = new InputFilter[1];
         filters[0] = new InputFilter.LengthFilter(MAX_LENGTH_STATUS_MESSAGE);
         etInput.setFilters(filters);
+        etInput.setMaxLines(Integer.MAX_VALUE);
+        etInput.setHorizontallyScrolling(false);
         etInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

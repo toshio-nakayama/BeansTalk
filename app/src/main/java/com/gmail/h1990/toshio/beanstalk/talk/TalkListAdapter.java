@@ -1,7 +1,6 @@
 package com.gmail.h1990.toshio.beanstalk.talk;
 
 import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
@@ -9,6 +8,7 @@ import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -52,11 +52,17 @@ public class TalkListAdapter extends RecyclerView.Adapter<TalkListAdapter.TalkLi
         storageReference.getDownloadUrl().addOnSuccessListener(uri -> GlideUtils.setPhoto(context
                 , uri, R.drawable.default_profile, holder.binding.ivProfile));
 
+        if (!talkListModel.getUnreadCount().equals("0")) {
+            holder.binding.tvUnreadCount.setVisibility(View.VISIBLE);
+            holder.binding.tvUnreadCount.setText(talkListModel.getUnreadCount());
+        } else {
+            holder.binding.tvUnreadCount.setVisibility(View.GONE);
+        }
+
         holder.binding.llTalkList.setOnClickListener(v -> {
             Intent intent = new Intent(context, TalkActivity.class);
             intent.putExtra(USER_KEY, talkListModel.getUserId());
             intent.putExtra(USER_NAME, talkListModel.getUserName());
-            intent.putExtra(PHOTO_NAME, talkListModel.getPhotoName());
             context.startActivity(intent);
         });
 

@@ -49,20 +49,20 @@ import com.mobsandgeeks.saripaar.annotation.Pattern;
 import java.util.Objects;
 
 public class SignupActivity extends AppCompatActivity {
-    @NotEmpty
-    @Length(min = 3, max = 10)
+    @NotEmpty(message = "必須項目です。入力をお願いします")
+    @Length(min = 1, max = 10, message = "1から10文字で入力してください")
     private EditText etName;
 
-    @NotEmpty
-    @Email
+    @NotEmpty(message = "必須項目です。入力をお願いします")
+    @Email(message = "有効なメールアドレスを入力してください")
     private EditText etEmail;
 
-    @NotEmpty
+    @NotEmpty(message = "必須項目です。入力をお願いします")
     @Password
-    @Pattern(regex = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})")
+    @Pattern(regex = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})", message = "英文字（ 大文字、小文字 ）、数字、記号 (@#$%)を１文字以上含む6~20文字で入力してください")
     private EditText etPassword;
 
-    @ConfirmPassword
+    @ConfirmPassword(message = "パスワードとパスワード(確認)が異なっています")
     private EditText etConfirmPassword;
 
     private String name;

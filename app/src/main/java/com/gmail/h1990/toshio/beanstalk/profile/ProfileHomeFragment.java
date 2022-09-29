@@ -6,6 +6,7 @@ import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
 import static com.gmail.h1990.toshio.beanstalk.common.Extras.STATUS_MESSAGE;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.BACKGROUND_PHOTO;
 import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
+import static com.gmail.h1990.toshio.beanstalk.profile.MessageDisplayFragment.DIALOG_TAG;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -49,7 +50,6 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
     private DatabaseReference databaseReferenceUser;
     private StorageReference storageRootRef;
     OnLogoutBtnClickListener callback;
-    private static final String DIALOG_TAG = "message_display_fragment";
     private FragmentProfileHomeBinding binding;
 
 
@@ -97,7 +97,7 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
         setProfile();
         MenuHost menuHost = requireActivity();
         menuHost.addMenuProvider(this, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
-        binding.btLogout.setOnClickListener(view1 -> {
+        binding.ibLogout.setOnClickListener(view1 -> {
             if (callback != null) {
                 callback.onLogoutBtnClick();
             }

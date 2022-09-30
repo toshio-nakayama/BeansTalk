@@ -1,8 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.changecolor;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.STYLE_RESOURCE;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.THEME;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -22,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.common.Extras;
+import com.gmail.h1990.toshio.beanstalk.model.ColorModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,10 +73,10 @@ public class MyColorFragment extends DialogFragment implements MyColorAdapter.Co
 
     @Override
     public void onColorBtnClick(@StyleRes int styleRes) {
-        SharedPreferences sharedPref = requireActivity().getSharedPreferences(THEME,
+        SharedPreferences sharedPref = requireActivity().getSharedPreferences(Extras.THEME,
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(STYLE_RESOURCE, styleRes);
+        editor.putInt(Extras.STYLE_RESOURCE, styleRes);
         editor.apply();
         if (callback != null) {
             callback.onPreferenceSaved();

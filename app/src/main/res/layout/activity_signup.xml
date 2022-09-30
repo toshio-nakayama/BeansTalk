@@ -5,23 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_dark"
-    android:padding="40dp"
+    android:paddingBottom="40dp"
     tools:context=".signup.SignupActivity">
 
-    <include
-        android:id="@+id/progress_bar"
-        layout="@layout/custom_progressbar"
-        android:visibility="gone" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/background_dark"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/Theme.BeansTalk.Toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
         android:id="@+id/relative_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/iv_profile"
@@ -51,7 +56,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:padding="40dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@+id/relative_layout"
         tools:layout_editor_absoluteX="40dp">
@@ -126,7 +131,6 @@
             android:hint="@string/confirm_password"
             android:textColorHint="@android:color/darker_gray"
             android:inputType="textPassword"
-
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:textSize="14sp"

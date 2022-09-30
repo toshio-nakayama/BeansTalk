@@ -1,12 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.friend;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.NAME;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.STATUS_MESSAGE;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TIME_STAMP;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
+import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.gmail.h1990.toshio.beanstalk.databinding.FragmentFriendBinding;
 import com.gmail.h1990.toshio.beanstalk.model.FriendListModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,9 +69,9 @@ public class FriendFragment extends Fragment {
 
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = currentUser = firebaseAuth.getCurrentUser();
-        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child(USERS);
-        DatabaseReference databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK).child(currentUser.getUid());
-        query = databaseReferenceTalk.orderByChild(TIME_STAMP);
+        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child(NodeNames.USERS);
+        DatabaseReference databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(NodeNames.TALK).child(currentUser.getUid());
+        query = databaseReferenceTalk.orderByChild(NodeNames.TIME_STAMP);
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -112,17 +107,17 @@ public class FriendFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String name = "";
                 Optional<Object> opt =
-                        Optional.ofNullable(snapshot.child(NAME).getValue());
+                        Optional.ofNullable(snapshot.child(NodeNames.NAME).getValue());
                 if (opt.isPresent()) {
-                    name = snapshot.child(NAME).getValue().toString();
+                    name = snapshot.child(NodeNames.NAME).getValue().toString();
                 }
                 String statusMessage = "";
                 Optional<Object> opt1 =
-                        Optional.ofNullable(snapshot.child(STATUS_MESSAGE).getValue());
+                        Optional.ofNullable(snapshot.child(NodeNames.STATUS_MESSAGE).getValue());
                 if (opt1.isPresent()) {
-                    statusMessage = snapshot.child(STATUS_MESSAGE).getValue().toString();
+                    statusMessage = snapshot.child(NodeNames.STATUS_MESSAGE).getValue().toString();
                 }
-                String photoName = userId + EXT_JPG;
+                String photoName = userId + Constants.EXT_JPG;
                 FriendListModel friendListModel = new FriendListModel(userId, name,
                         statusMessage, photoName);
                 friendModelList.add(friendListModel);

@@ -1,9 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.talk;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +10,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
+import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.gmail.h1990.toshio.beanstalk.databinding.MessageLayoutBinding;
 import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionState;
@@ -60,7 +58,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             setTag(holder, messageModel);
         } else {
             setReceivedMessage(holder, messageModel.getMessage(), messageTime);
-            String photoName = messageModel.getMessageFrom() + EXT_JPG;
+            String photoName = messageModel.getMessageFrom() + Constants.EXT_JPG;
             setPhoto(holder, photoName);
             setSentReaction(holder, messageModel.getReactionStatus());
             setTag(holder, messageModel);
@@ -95,7 +93,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     private void setPhoto(MessageViewHolder holder, String photoName) {
         StorageReference mRef =
-                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(photoName);
+                FirebaseStorage.getInstance().getReference().child(Constants.IMAGES_FOLDER).child(NodeNames.PHOTO).child(photoName);
         mRef.getDownloadUrl().addOnSuccessListener(uri -> {
             GlideUtils.setPhoto(context, uri, R.drawable.default_profile, holder.binding.ivProfile);
         });

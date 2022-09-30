@@ -1,15 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.addfriend;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.NAME;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TIME_STAMP;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.gmail.h1990.toshio.beanstalk.MainActivity;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
 import com.gmail.h1990.toshio.beanstalk.common.Extras;
+import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.gmail.h1990.toshio.beanstalk.databinding.ActivityAddFriendBinding;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,7 +43,7 @@ public class AddFriendActivity extends AppCompatActivity {
         binding = ActivityAddFriendBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        if (getIntent().hasExtra(USER_KEY)) {
+        if (getIntent().hasExtra(Extras.USER_KEY)) {
             friendUserId = getIntent().getStringExtra(Extras.USER_KEY);
         }
         setupFirebase();
@@ -64,8 +56,8 @@ public class AddFriendActivity extends AppCompatActivity {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
         currentUser = firebaseAuth.getCurrentUser();
-        databaseReferenceUser = databaseRootRef.child(USERS);
-        databaseReferenceTalk = databaseRootRef.child(TALK);
+        databaseReferenceUser = databaseRootRef.child(NodeNames.USERS);
+        databaseReferenceTalk = databaseRootRef.child(NodeNames.TALK);
         storageRootRef = FirebaseStorage.getInstance().getReference();
     }
 
@@ -73,12 +65,12 @@ public class AddFriendActivity extends AppCompatActivity {
         databaseReferenceUser.child(friendUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String photoName = friendUserId + EXT_JPG;
-                final StorageReference fileRef = storageRootRef.child(IMAGES_FOLDER).child(PHOTO).child(photoName);
+                String photoName = friendUserId + Constants.EXT_JPG;
+                final StorageReference fileRef = storageRootRef.child(Constants.IMAGES_FOLDER).child(NodeNames.PHOTO).child(photoName);
                 fileRef.getDownloadUrl().addOnFailureListener(e -> {
-                    Log.e(TAG, getString(R.string.failed_to_download_uri));
+                    Log.e(Constants.TAG, getString(R.string.failed_to_download_uri));
                 }).addOnSuccessListener(uri -> {
-                    binding.tvName.setText(Objects.requireNonNull(snapshot.child(NAME).getValue()).toString());
+                    binding.tvName.setText(Objects.requireNonNull(snapshot.child(NodeNames.NAME).getValue()).toString());
                     GlideUtils.setPhoto(AddFriendActivity.this, uri, R.drawable.default_profile,
                             binding.ivProfile);
                 });
@@ -93,13 +85,13 @@ public class AddFriendActivity extends AppCompatActivity {
 
     private void onAddBtnClick() {
         String currentUserId = currentUser.getUid();
-        databaseReferenceTalk.child(currentUserId).child(friendUserId).child(TIME_STAMP)
+        databaseReferenceTalk.child(currentUserId).child(friendUserId).child(NodeNames.TIME_STAMP)
                 .setValue(ServerValue.TIMESTAMP).addOnFailureListener(e -> {
-                    Log.e(TAG, getString(R.string.failed_to_add_friend));
+                    Log.e(Constants.TAG, getString(R.string.failed_to_add_friend));
                 }).addOnSuccessListener(unused -> {
-                    databaseReferenceTalk.child(friendUserId).child(currentUserId).child(TIME_STAMP)
+                    databaseReferenceTalk.child(friendUserId).child(currentUserId).child(NodeNames.TIME_STAMP)
                             .setValue(ServerValue.TIMESTAMP).addOnFailureListener(e -> {
-                                Log.e(TAG, getString(R.string.failed_to_add_friend));
+                                Log.e(Constants.TAG, getString(R.string.failed_to_add_friend));
                             }).addOnSuccessListener(unused1 -> {
                                 startActivity(new Intent(AddFriendActivity.this,
                                         MainActivity.class));

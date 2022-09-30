@@ -1,8 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.login;
 
-import static com.gmail.h1990.toshio.beanstalk.changecolor.MyColorFragment.DIALOG_TAG;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +12,7 @@ import com.gmail.h1990.toshio.beanstalk.MainActivity;
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.changecolor.MyColorFragment;
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
 import com.gmail.h1990.toshio.beanstalk.databinding.ActivityLoginBinding;
 import com.gmail.h1990.toshio.beanstalk.signup.SignupActivity;
 import com.gmail.h1990.toshio.beanstalk.util.NetworkChecker;
@@ -67,7 +65,6 @@ public class LoginActivity extends AppCompatActivity implements MyColorFragment.
 
     public void onTvSignupClick() {
         startActivity(new Intent(this, SignupActivity.class));
-        finish();
     }
 
     public void onLoginBtnClick() {
@@ -80,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements MyColorFragment.
         if (validation.validate()) {
             final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
             firebaseAuth.signInWithEmailAndPassword(email, password)
-                    .addOnFailureListener(e -> Log.e(TAG, getString(R.string.failed_to_login, e.getMessage())))
+                    .addOnFailureListener(e -> Log.e(Constants.TAG, getString(R.string.failed_to_login, e.getMessage())))
                     .addOnSuccessListener(authResult -> {
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
@@ -91,7 +88,7 @@ public class LoginActivity extends AppCompatActivity implements MyColorFragment.
 
     private void generateMyColorDialog() {
         DialogFragment dialogFragment = new MyColorFragment();
-        dialogFragment.show(getSupportFragmentManager(), DIALOG_TAG);
+        dialogFragment.show(getSupportFragmentManager(), MyColorFragment.DIALOG_TAG);
     }
 
     @Override

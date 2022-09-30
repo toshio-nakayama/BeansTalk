@@ -36,7 +36,7 @@
                 tools:text="Name" />
 
             <TextView
-                android:id="@+id/tv_status_message"
+                android:id="@+id/tv_statusMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -67,28 +67,24 @@
 
 
         <TextView
-            android:id="@+id/tv_friend_list"
             android:layout_width="266dp"
             android:layout_height="75dp"
             android:background="@color/zxing_transparent"
             android:gravity="left|center_vertical"
             android:text="@string/friend_list"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_friends_count"
+            android:id="@+id/tv_friendsCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right|center_vertical"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-
             tools:text="0" />
 
         <ImageView
-            android:id="@+id/iv_arrow_right"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"

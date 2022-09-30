@@ -1,15 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.profile;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.MAX_LENGTH_NAME;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.MAX_LENGTH_STATUS_MESSAGE;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.MIN_LENGTH_NAME;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.CONTENTS;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.EDIT_TYPE;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.REQUEST_KEY;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.STATUS_MESSAGE;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
-
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.Editable;
@@ -30,6 +20,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
+import com.gmail.h1990.toshio.beanstalk.common.Extras;
+import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -72,7 +65,7 @@ public class MessageEditFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
-        currentUserRef = databaseRootRef.child(USERS).child(currentUser.getUid());
+        currentUserRef = databaseRootRef.child(NodeNames.USERS).child(currentUser.getUid());
         initView();
     }
 
@@ -80,15 +73,15 @@ public class MessageEditFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        getParentFragmentManager().setFragmentResultListener(REQUEST_KEY, this,
+        getParentFragmentManager().setFragmentResultListener(Extras.REQUEST_KEY, this,
                 (requestKey, result) -> {
-                    editType = result.getInt(EDIT_TYPE);
+                    editType = result.getInt(Extras.EDIT_TYPE);
                     if (editType == 0) {
                         setupInputBasedOnName();
                     } else if (editType == 1) {
                         setupInputBasedOnStatusMessage();
                     }
-                    String contents = result.getString(CONTENTS);
+                    String contents = result.getString(Extras.CONTENTS);
                     etInput.setText(contents);
                 });
         ibClose.setOnClickListener(view -> dismiss());
@@ -105,7 +98,7 @@ public class MessageEditFragment extends DialogFragment {
 
     private void setupInputBasedOnName() {
         InputFilter[] filters = new InputFilter[1];
-        filters[0] = new InputFilter.LengthFilter(MAX_LENGTH_NAME);
+        filters[0] = new InputFilter.LengthFilter(Constants.MAX_LENGTH_NAME);
         etInput.setFilters(filters);
         etInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -121,11 +114,11 @@ public class MessageEditFragment extends DialogFragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 String name = editable.toString();
-                tvWordCount.setText(MessageFormat.format("{0}/{1}", name.length(), MAX_LENGTH_NAME));
-                if (name.length() < MIN_LENGTH_NAME) {
+                tvWordCount.setText(MessageFormat.format("{0}/{1}", name.length(), Constants.MAX_LENGTH_NAME));
+                if (name.length() < Constants.MIN_LENGTH_NAME) {
                     if (isAdded()) {
                         etInput.setError(getString(R.string.less_characters_warning,
-                                String.valueOf(MIN_LENGTH_NAME)));
+                                String.valueOf(Constants.MIN_LENGTH_NAME)));
                     }
                     btSave.setEnabled(false);
                 } else {
@@ -139,7 +132,7 @@ public class MessageEditFragment extends DialogFragment {
     private void setupInputBasedOnStatusMessage() {
         etInput.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         InputFilter[] filters = new InputFilter[1];
-        filters[0] = new InputFilter.LengthFilter(MAX_LENGTH_STATUS_MESSAGE);
+        filters[0] = new InputFilter.LengthFilter(Constants.MAX_LENGTH_STATUS_MESSAGE);
         etInput.setFilters(filters);
         etInput.setMaxLines(Integer.MAX_VALUE);
         etInput.setHorizontallyScrolling(false);
@@ -155,7 +148,7 @@ public class MessageEditFragment extends DialogFragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 String statusMessage = editable.toString();
-                tvWordCount.setText(MessageFormat.format("{0}/{1}", statusMessage.length(), MAX_LENGTH_STATUS_MESSAGE));
+                tvWordCount.setText(MessageFormat.format("{0}/{1}", statusMessage.length(), Constants.MAX_LENGTH_STATUS_MESSAGE));
             }
         });
     }
@@ -177,21 +170,21 @@ public class MessageEditFragment extends DialogFragment {
         currentUser.updateProfile(profileUpdates).addOnSuccessListener(
                 unused -> currentUser.updateProfile(profileUpdates).addOnFailureListener(e -> {
                     if (isAdded())
-                        Log.e(TAG, getString(R.string.failed_to_update));
+                        Log.e(Constants.TAG, getString(R.string.failed_to_update));
                 }).addOnSuccessListener(unused1 -> {
                     if (isAdded())
-                        Log.d(TAG, getString(R.string.user_profile_updated));
+                        Log.d(Constants.TAG, getString(R.string.user_profile_updated));
                 }));
     }
 
     private void updateStatusMessage() {
         String statusMessage = etInput.getText().toString().trim();
-        currentUserRef.child(STATUS_MESSAGE).setValue(statusMessage).addOnFailureListener(e -> {
+        currentUserRef.child(NodeNames.STATUS_MESSAGE).setValue(statusMessage).addOnFailureListener(e -> {
             if (isAdded())
-                Log.e(TAG, getString(R.string.failed_to_update));
+                Log.e(Constants.TAG, getString(R.string.failed_to_update));
         }).addOnSuccessListener(unused -> {
             if (isAdded())
-                Log.d(TAG, getString(R.string.user_profile_updated));
+                Log.d(Constants.TAG, getString(R.string.user_profile_updated));
         });
     }
 }

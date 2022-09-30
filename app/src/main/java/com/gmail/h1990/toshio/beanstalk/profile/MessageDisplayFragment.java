@@ -1,7 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.profile;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.STATUS_MESSAGE;
-
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.ViewGroup;
@@ -10,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.gmail.h1990.toshio.beanstalk.common.Extras;
 import com.gmail.h1990.toshio.beanstalk.databinding.FragmentMessageDisplayBinding;
 
 public class MessageDisplayFragment extends DialogFragment {
@@ -35,7 +34,7 @@ public class MessageDisplayFragment extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        String message = getArguments().getString(STATUS_MESSAGE, "");
+        String message = getArguments().getString(Extras.STATUS_MESSAGE, "");
         binding.tvStatusMessage.setText(message);
         binding.ibClose.setOnClickListener(view -> {
             dismiss();

@@ -1,6 +1,8 @@
-package com.gmail.h1990.toshio.beanstalk.reaction;
+package com.gmail.h1990.toshio.beanstalk.model;
 
 import android.graphics.drawable.Drawable;
+
+import com.gmail.h1990.toshio.beanstalk.reaction.ReactionState;
 
 public class ReactionModel {
     private Drawable graphics;

@@ -1,11 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.friend;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.PHOTO_NAME;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_NAME;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.PHOTO;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -15,6 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
+import com.gmail.h1990.toshio.beanstalk.common.Extras;
+import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.gmail.h1990.toshio.beanstalk.databinding.FriendListLayoutBinding;
 import com.gmail.h1990.toshio.beanstalk.model.FriendListModel;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
@@ -48,16 +45,16 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
         holder.binding.tvName.setText(friendListModel.getUserName());
         holder.binding.tvStatusMessage.setText(friendListModel.getStatusMessage());
         StorageReference storageReference =
-                FirebaseStorage.getInstance().getReference().child(IMAGES_FOLDER).child(PHOTO).child(friendListModel.getPhotoName());
+                FirebaseStorage.getInstance().getReference().child(Constants.IMAGES_FOLDER).child(NodeNames.PHOTO).child(friendListModel.getPhotoName());
         storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
             GlideUtils.setPhoto(context, uri, R.drawable.default_profile, holder.binding.ivProfile);
         });
 
         holder.binding.llFriendList.setOnClickListener(v -> {
             Intent intent = new Intent(context, FriendProfileActivity.class);
-            intent.putExtra(USER_KEY, friendListModel.getUserId());
-            intent.putExtra(USER_NAME, friendListModel.getUserName());
-            intent.putExtra(PHOTO_NAME, friendListModel.getPhotoName());
+            intent.putExtra(Extras.USER_KEY, friendListModel.getUserId());
+            intent.putExtra(Extras.USER_NAME, friendListModel.getUserName());
+            intent.putExtra(Extras.PHOTO_NAME, friendListModel.getPhotoName());
             context.startActivity(intent);
         });
 

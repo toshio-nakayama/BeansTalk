@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.databinding.ColorBtnLayoutBinding;
+import com.gmail.h1990.toshio.beanstalk.model.ColorModel;
 
 import java.util.List;
 

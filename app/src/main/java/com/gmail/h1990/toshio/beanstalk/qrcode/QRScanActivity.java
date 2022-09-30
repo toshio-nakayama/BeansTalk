@@ -30,6 +30,9 @@ public class QRScanActivity extends AppCompatActivity implements QRGenerateFragm
         captureManager = new CaptureManager(this, binding.dbvScanView);
         captureManager.initializeFromIntent(getIntent(), savedInstanceState);
         captureManager.decode();
+
+        binding.ibClose.setOnClickListener(view1 -> onClose());
+        binding.btMyQrcode.setOnClickListener(view12 -> onMyQRCodeBtnClick());
     }
 
     @Override
@@ -61,11 +64,11 @@ public class QRScanActivity extends AppCompatActivity implements QRGenerateFragm
         return binding.dbvScanView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
 
-    public void onClose(View view) {
+    public void onClose() {
         finish();
     }
 
-    public void onMyQRCodeButtonClick(View view) {
+    public void onMyQRCodeBtnClick() {
         binding.btMyQrcode.setEnabled(false);
         binding.ibClose.setEnabled(false);
         FragmentManager fragmentManager = getSupportFragmentManager();

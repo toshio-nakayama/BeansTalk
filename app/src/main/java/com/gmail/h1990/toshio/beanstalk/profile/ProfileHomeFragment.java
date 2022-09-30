@@ -1,13 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.profile;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.IMAGES_FOLDER;
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.STATUS_MESSAGE;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.BACKGROUND_PHOTO;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
-import static com.gmail.h1990.toshio.beanstalk.profile.MessageDisplayFragment.DIALOG_TAG;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -29,6 +21,9 @@ import androidx.lifecycle.Lifecycle;
 import androidx.navigation.Navigation;
 
 import com.gmail.h1990.toshio.beanstalk.R;
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
+import com.gmail.h1990.toshio.beanstalk.common.Extras;
+import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.gmail.h1990.toshio.beanstalk.databinding.FragmentProfileHomeBinding;
 import com.gmail.h1990.toshio.beanstalk.model.UserModel;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
@@ -45,7 +40,6 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Objects;
 
 public class ProfileHomeFragment extends Fragment implements MenuProvider {
-
     private FirebaseUser currentUser;
     private DatabaseReference databaseReferenceUser;
     private StorageReference storageRootRef;
@@ -77,7 +71,7 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
     private void setupFirebase() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
-        databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(USERS);
+        databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(NodeNames.USERS);
         storageRootRef = FirebaseStorage.getInstance().getReference();
     }
 
@@ -135,9 +129,9 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
                 DialogFragment dialogFragment = new MessageDisplayFragment();
                 Bundle args = new Bundle();
                 String message = binding.tvStatusMessage.getText().toString();
-                args.putString(STATUS_MESSAGE, message);
+                args.putString(Extras.STATUS_MESSAGE, message);
                 dialogFragment.setArguments(args);
-                dialogFragment.show(getParentFragmentManager(), DIALOG_TAG);
+                dialogFragment.show(getParentFragmentManager(), MessageDisplayFragment.DIALOG_TAG);
             }
         });
     }
@@ -161,11 +155,11 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
     }
 
     private void setBackground() {
-        String photo = currentUser.getUid() + EXT_JPG;
+        String photo = currentUser.getUid() + Constants.EXT_JPG;
         StorageReference fileRef =
-                storageRootRef.child(IMAGES_FOLDER).child(BACKGROUND_PHOTO).child(photo);
+                storageRootRef.child(Constants.IMAGES_FOLDER).child(NodeNames.BACKGROUND_PHOTO).child(photo);
         fileRef.getDownloadUrl()
-                .addOnFailureListener(e -> Log.e(TAG, getString(R.string.failed_to_download_uri)))
+                .addOnFailureListener(e -> Log.e(Constants.TAG, getString(R.string.failed_to_download_uri)))
                 .addOnSuccessListener(
                         uri -> GlideUtils.setPhoto(getContext(), uri, R.drawable.default_background, binding.ivBackgroundPhoto));
     }

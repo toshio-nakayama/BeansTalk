@@ -1,10 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.home;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.TAG;
-import static com.gmail.h1990.toshio.beanstalk.common.Extras.USER_KEY;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -31,6 +26,9 @@ import androidx.navigation.Navigation;
 
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.addfriend.AddFriendActivity;
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
+import com.gmail.h1990.toshio.beanstalk.common.Extras;
+import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.gmail.h1990.toshio.beanstalk.databinding.FragmentHomeBinding;
 import com.gmail.h1990.toshio.beanstalk.model.UserModel;
 import com.gmail.h1990.toshio.beanstalk.profile.ProfileActivity;
@@ -126,9 +124,9 @@ public class HomeFragment extends Fragment implements MenuProvider {
         final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
         final DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
-        databaseReferenceUser = databaseRootRef.child(USERS);
-        databaseReferenceTalk = databaseRootRef.child(TALK);
-        databaseReferenceCurrentUser = databaseRootRef.child(USERS).child(currentUser.getUid());
+        databaseReferenceUser = databaseRootRef.child(NodeNames.USERS);
+        databaseReferenceTalk = databaseRootRef.child(NodeNames.TALK);
+        databaseReferenceCurrentUser = databaseRootRef.child(NodeNames.USERS).child(currentUser.getUid());
     }
 
     private void setFriendsCount() {
@@ -167,15 +165,15 @@ public class HomeFragment extends Fragment implements MenuProvider {
         String currentUserId = currentUser.getUid();
         if (!id.equals(currentUserId)) {
             databaseReferenceTalk.child(currentUserId).child(id).get().addOnFailureListener(e -> {
-                Log.e(TAG, getString(R.string.failed_to_get_data));
+                Log.e(Constants.TAG, getString(R.string.failed_to_get_data));
             }).addOnSuccessListener(dataSnapshot -> {
                 if (!dataSnapshot.exists()) {
                     databaseReferenceUser.child(id).get().addOnFailureListener(e -> {
-                        Log.e(TAG, getString(R.string.failed_to_get_data));
+                        Log.e(Constants.TAG, getString(R.string.failed_to_get_data));
                     }).addOnSuccessListener(dataSnapshot1 -> {
                         if (dataSnapshot1.exists()) {
                             Intent intent = new Intent(getActivity(), AddFriendActivity.class);
-                            intent.putExtra(USER_KEY, id);
+                            intent.putExtra(Extras.USER_KEY, id);
                             startActivity(intent);
                         }
                     });

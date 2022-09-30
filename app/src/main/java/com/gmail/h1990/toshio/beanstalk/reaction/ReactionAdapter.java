@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gmail.h1990.toshio.beanstalk.databinding.ReactionBtnLayoutBinding;
+import com.gmail.h1990.toshio.beanstalk.model.ReactionModel;
 import com.gmail.h1990.toshio.beanstalk.talk.TalkActivity;
 
 import java.util.List;

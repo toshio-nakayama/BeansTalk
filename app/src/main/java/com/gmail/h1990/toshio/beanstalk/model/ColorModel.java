@@ -1,4 +1,4 @@
-package com.gmail.h1990.toshio.beanstalk.changecolor;
+package com.gmail.h1990.toshio.beanstalk.model;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.StyleRes;

@@ -1,12 +1,5 @@
 package com.gmail.h1990.toshio.beanstalk.talk;
 
-import static com.gmail.h1990.toshio.beanstalk.common.Constants.EXT_JPG;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.NAME;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TALK;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.TIME_STAMP;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.UNREAD_COUNT;
-import static com.gmail.h1990.toshio.beanstalk.common.NodeNames.USERS;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.gmail.h1990.toshio.beanstalk.common.Constants;
+import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.gmail.h1990.toshio.beanstalk.databinding.FragmentTalkBinding;
 import com.gmail.h1990.toshio.beanstalk.model.TalkListModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,9 +49,9 @@ public class TalkFragment extends Fragment {
     private void setupFirebase() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child(USERS);
+        databaseReferenceUsers = FirebaseDatabase.getInstance().getReference().child(NodeNames.USERS);
         databaseReferenceTalk = FirebaseDatabase.getInstance().getReference()
-                .child(TALK).child(Objects.requireNonNull(currentUser).getUid());
+                .child(NodeNames.TALK).child(Objects.requireNonNull(currentUser).getUid());
     }
 
     @Override
@@ -85,7 +80,7 @@ public class TalkFragment extends Fragment {
         linearLayoutManager.setStackFromEnd(true);
         binding.rvTalkList.setLayoutManager(linearLayoutManager);
         binding.rvTalkList.setAdapter(talkListAdapter);
-        query = databaseReferenceTalk.orderByChild(TIME_STAMP);
+        query = databaseReferenceTalk.orderByChild(NodeNames.TIME_STAMP);
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -119,20 +114,20 @@ public class TalkFragment extends Fragment {
         String lastMessage, time, unreadCount;
         lastMessage = "";
         time = "";
-        unreadCount = dataSnapshot.child(UNREAD_COUNT).getValue() == null ? "0" :
-                dataSnapshot.child(UNREAD_COUNT).getValue().toString();
+        unreadCount = dataSnapshot.child(NodeNames.UNREAD_COUNT).getValue() == null ? "0" :
+                dataSnapshot.child(NodeNames.UNREAD_COUNT).getValue().toString();
         databaseReferenceUsers.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String name = null;
                 Optional<Object> opt1 =
-                        Optional.ofNullable(snapshot.child(NAME).getValue());
+                        Optional.ofNullable(snapshot.child(NodeNames.NAME).getValue());
                 if (opt1.isPresent()) {
-                    name = snapshot.child(NAME).getValue().toString();
+                    name = snapshot.child(NodeNames.NAME).getValue().toString();
                 } else {
                     name = "";
                 }
-                String photoName = userId + EXT_JPG;
+                String photoName = userId + Constants.EXT_JPG;
                 TalkListModel talkListModel = new TalkListModel(userId, name, photoName,
                         unreadCount, lastMessage, time);
                 if (isNew) {

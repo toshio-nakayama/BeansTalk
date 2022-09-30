@@ -142,7 +142,7 @@ public class ProfileHomeFragment extends Fragment implements MenuProvider {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 UserModel userModel = snapshot.getValue(UserModel.class);
                 GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile, binding.ivProfile);
-                binding.tvName.setText(currentUser.getDisplayName());
+                binding.tvName.setText(userModel.getName());
                 binding.tvStatusMessage.setText(Objects.requireNonNull(userModel).getStatusMessage());
                 setBackground();
             }

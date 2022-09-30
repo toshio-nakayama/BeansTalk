@@ -168,12 +168,16 @@ public class MessageEditFragment extends DialogFragment {
         UserProfileChangeRequest profileUpdates =
                 new UserProfileChangeRequest.Builder().setDisplayName(name).build();
         currentUser.updateProfile(profileUpdates).addOnSuccessListener(
-                unused -> currentUser.updateProfile(profileUpdates).addOnFailureListener(e -> {
-                    if (isAdded())
-                        Log.e(Constants.TAG, getString(R.string.failed_to_update));
-                }).addOnSuccessListener(unused1 -> {
-                    if (isAdded())
-                        Log.d(Constants.TAG, getString(R.string.user_profile_updated));
+                unused -> currentUser.updateProfile(profileUpdates).addOnSuccessListener(unused1 -> {
+                    currentUserRef.child(NodeNames.NAME).setValue(name).addOnFailureListener(e -> {
+                        if (isAdded())
+                            Log.e(Constants.TAG, getString(R.string.failed_to_update));
+                    }).addOnSuccessListener(unused2 -> {
+                        if (isAdded()) {
+                            Log.d(Constants.TAG, getString(R.string.user_profile_updated));
+                        }
+                    });
+
                 }));
     }
 

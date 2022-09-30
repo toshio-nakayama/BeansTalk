@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,10 +45,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.util.Objects;
+
 public class HomeFragment extends Fragment implements MenuProvider {
     private FirebaseUser currentUser;
-    private DatabaseReference databaseReferenceTalk, databaseReferenceUser, databaseReferenceCurrentUser;
-    private ValueEventListener valueEventListener;
+    private DatabaseReference databaseReferenceTalk, databaseReferenceUser,
+            databaseReferenceCurrentUser, databaseReferenceTalkCurrentUser;
+    private ValueEventListener valueEventListenerUser, valueEventListenerTalk;
     private FragmentHomeBinding binding;
     private static final int MENU_POSITION = 0;
     private static final int SUBMENU_POSITION = 0;
@@ -69,15 +73,24 @@ public class HomeFragment extends Fragment implements MenuProvider {
         return view;
     }
 
+    private void setupStatusMessage() {
+        binding.tvStatusMessage.setEms(12);
+        binding.tvStatusMessage.setSingleLine(true);
+        binding.tvStatusMessage.setSelected(true);
+        binding.tvStatusMessage.setEllipsize(TextUtils.TruncateAt.END);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupStatusMessage();
         LinearLayout llFriendList = view.findViewById(R.id.ll_friend_list);
         llFriendList.setOnClickListener(v -> {
             Navigation.findNavController(view).navigate(R.id.friendFragment);
         });
-        setFriendsCount();
+
         setProfile();
+        setFriendsCount();
         binding.llProfile.setOnClickListener(view1 -> {
             startActivity(new Intent(getActivity(), ProfileActivity.class));
         });
@@ -88,7 +101,8 @@ public class HomeFragment extends Fragment implements MenuProvider {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        databaseReferenceCurrentUser.removeEventListener(valueEventListener);
+        databaseReferenceCurrentUser.removeEventListener(valueEventListenerUser);
+        databaseReferenceTalkCurrentUser.removeEventListener(valueEventListenerTalk);
     }
 
     @Override
@@ -111,26 +125,26 @@ public class HomeFragment extends Fragment implements MenuProvider {
     }
 
     private void setProfile() {
-        binding.tvName.setText(currentUser.getDisplayName());
-        databaseReferenceUser.child(currentUser.getUid()).get().addOnSuccessListener(dataSnapshot -> {
-            UserModel userModel = dataSnapshot.getValue(UserModel.class);
-            binding.tvStatusMessage.setText(userModel.getStatusMessage());
-        });
-        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile,
-                binding.ivProfile);
-    }
+        valueEventListenerUser = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                binding.tvName.setText(currentUser.getDisplayName());
+                UserModel userModel = snapshot.getValue(UserModel.class);
+                binding.tvStatusMessage.setText(Objects.requireNonNull(userModel).getStatusMessage());
+                GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile,
+                        binding.ivProfile);
+            }
 
-    private void setupFirebase() {
-        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = firebaseAuth.getCurrentUser();
-        final DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
-        databaseReferenceUser = databaseRootRef.child(NodeNames.USERS);
-        databaseReferenceTalk = databaseRootRef.child(NodeNames.TALK);
-        databaseReferenceCurrentUser = databaseRootRef.child(NodeNames.USERS).child(currentUser.getUid());
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        databaseReferenceCurrentUser.addValueEventListener(valueEventListenerUser);
     }
 
     private void setFriendsCount() {
-        valueEventListener = new ValueEventListener() {
+        valueEventListenerTalk = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String count = String.valueOf(snapshot.getChildrenCount());
@@ -142,7 +156,18 @@ public class HomeFragment extends Fragment implements MenuProvider {
 
             }
         };
-        databaseReferenceCurrentUser.addValueEventListener(valueEventListener);
+        databaseReferenceTalkCurrentUser.addValueEventListener(valueEventListenerTalk);
+
+    }
+
+    private void setupFirebase() {
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+        final DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
+        databaseReferenceUser = databaseRootRef.child(NodeNames.USERS);
+        databaseReferenceTalk = databaseRootRef.child(NodeNames.TALK);
+        databaseReferenceCurrentUser = databaseRootRef.child(NodeNames.USERS).child(currentUser.getUid());
+        databaseReferenceTalkCurrentUser = databaseReferenceTalk.child(currentUser.getUid());
     }
 
     private void launchQRScanner() {

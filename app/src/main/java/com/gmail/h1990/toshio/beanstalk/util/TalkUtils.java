@@ -21,7 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TalkUtil {
+public class TalkUtils {
     public static void updateTalkDetails(Context context, String currentUserId, String talkUserId) {
         final DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference databaseTalkRef =

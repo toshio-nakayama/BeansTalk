@@ -45,4 +45,11 @@
     <string name="signup_failed">Signup failed.</string>
     <string name="add_friend">ともだち追加</string>
 
+    <!-- Validation Messages. -->
+    <string name="require_validation_messages">必須項目です。入力をお願いします</string>
+    <string name="name_validation_messages">1から10文字で入力してください</string>
+    <string name="email_validation_messages">有効なメールアドレスを入力してください</string>
+    <string name="password_validation_messages">英文字（ 大文字、小文字 ）、数字、記号 (@#$%)を１文字以上含む6~20文字で入力してください</string>
+    <string name="confirm_password_validation_messages">パスワードとパスワード(確認)が異なっています</string>
+
 </resources>

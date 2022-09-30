@@ -48,7 +48,8 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 public class HomeFragment extends Fragment implements MenuProvider {
     private FirebaseUser currentUser;
-    private DatabaseReference databaseReferenceTalk, databaseReferenceUser;
+    private DatabaseReference databaseReferenceTalk, databaseReferenceUser, databaseReferenceCurrentUser;
+    private ValueEventListener valueEventListener;
     private FragmentHomeBinding binding;
     private static final int MENU_POSITION = 0;
     private static final int SUBMENU_POSITION = 0;
@@ -60,23 +61,6 @@ public class HomeFragment extends Fragment implements MenuProvider {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupFirebase();
-    }
-
-    private void setProfile() {
-        binding.tvName.setText(currentUser.getDisplayName());
-        databaseReferenceUser.child(currentUser.getUid()).get().addOnSuccessListener(dataSnapshot -> {
-            UserModel userModel = dataSnapshot.getValue(UserModel.class);
-            binding.tvStatusMessage.setText(userModel.getStatusMessage());
-        });
-        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile,
-                binding.ivProfile);
-    }
-
-    private void setupFirebase() {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = firebaseAuth.getCurrentUser();
-        databaseReferenceUser = FirebaseDatabase.getInstance().getReference().child(USERS);
-        databaseReferenceTalk = FirebaseDatabase.getInstance().getReference().child(TALK);
     }
 
     @Override
@@ -104,6 +88,12 @@ public class HomeFragment extends Fragment implements MenuProvider {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        databaseReferenceCurrentUser.removeEventListener(valueEventListener);
+    }
+
+    @Override
     public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.menu_home, menu);
         SubMenu subMenu = (SubMenu) menu.getItem(MENU_POSITION).getSubMenu();
@@ -122,8 +112,27 @@ public class HomeFragment extends Fragment implements MenuProvider {
         return true;
     }
 
+    private void setProfile() {
+        binding.tvName.setText(currentUser.getDisplayName());
+        databaseReferenceUser.child(currentUser.getUid()).get().addOnSuccessListener(dataSnapshot -> {
+            UserModel userModel = dataSnapshot.getValue(UserModel.class);
+            binding.tvStatusMessage.setText(userModel.getStatusMessage());
+        });
+        GlideUtils.setPhoto(getContext(), currentUser.getPhotoUrl(), R.drawable.default_profile,
+                binding.ivProfile);
+    }
+
+    private void setupFirebase() {
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+        final DatabaseReference databaseRootRef = FirebaseDatabase.getInstance().getReference();
+        databaseReferenceUser = databaseRootRef.child(USERS);
+        databaseReferenceTalk = databaseRootRef.child(TALK);
+        databaseReferenceCurrentUser = databaseRootRef.child(USERS).child(currentUser.getUid());
+    }
+
     private void setFriendsCount() {
-        databaseReferenceTalk.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String count = String.valueOf(snapshot.getChildrenCount());
@@ -134,7 +143,8 @@ public class HomeFragment extends Fragment implements MenuProvider {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        databaseReferenceCurrentUser.addValueEventListener(valueEventListener);
     }
 
     private void launchQRScanner() {

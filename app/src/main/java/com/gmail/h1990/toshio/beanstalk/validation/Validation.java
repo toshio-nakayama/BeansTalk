@@ -1,4 +1,4 @@
-package com.gmail.h1990.toshio.beanstalk.util;
+package com.gmail.h1990.toshio.beanstalk.validation;
 
 import android.view.View;
 import android.widget.TextView;
@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.Normalizer;
 import java.util.List;
 
-public class Validation implements Validator.ValidationListener{
+public class Validation implements Validator.ValidationListener {
     protected Validator validator;
     protected boolean validated;
 
@@ -44,7 +44,7 @@ public class Validation implements Validator.ValidationListener{
         }
     }
 
-    public String trimAndNormalize(String str){
+    public String trimAndNormalize(String str) {
         str = StringUtils.strip(str);
         str = Normalizer.normalize(str, Normalizer.Form.NFKC);
         return str;

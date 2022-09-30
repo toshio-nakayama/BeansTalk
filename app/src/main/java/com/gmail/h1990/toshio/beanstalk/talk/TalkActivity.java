@@ -38,8 +38,8 @@ import com.gmail.h1990.toshio.beanstalk.model.MessageModel;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionFragment;
 import com.gmail.h1990.toshio.beanstalk.reaction.ReactionState;
 import com.gmail.h1990.toshio.beanstalk.util.NetworkChecker;
-import com.gmail.h1990.toshio.beanstalk.util.TalkUtil;
-import com.gmail.h1990.toshio.beanstalk.util.Validation;
+import com.gmail.h1990.toshio.beanstalk.util.TalkUtils;
+import com.gmail.h1990.toshio.beanstalk.validation.Validation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -134,6 +134,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         validator = null;
+
     }
 
     @Override
@@ -183,7 +184,7 @@ public class TalkActivity extends AppCompatActivity implements View.OnClickListe
                         Log.e(TAG, getString(R.string.failed_to_send_message) + error.getMessage());
                     } else {
                         Log.d(TAG, getString(R.string.message_sent_successfully));
-                        TalkUtil.updateTalkDetails(TalkActivity.this, currentUserId, talkUserId);
+                        TalkUtils.updateTalkDetails(TalkActivity.this, currentUserId, talkUserId);
                     }
                 });
             }

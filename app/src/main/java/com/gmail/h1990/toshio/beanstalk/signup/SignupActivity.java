@@ -15,7 +15,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,7 +28,12 @@ import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
 import com.gmail.h1990.toshio.beanstalk.databinding.ActivitySignupBinding;
 import com.gmail.h1990.toshio.beanstalk.login.LoginActivity;
 import com.gmail.h1990.toshio.beanstalk.model.UserModel;
-import com.gmail.h1990.toshio.beanstalk.util.Validation;
+import com.gmail.h1990.toshio.beanstalk.util.ToastGenerator;
+import com.gmail.h1990.toshio.beanstalk.validation.Validation;
+import com.gmail.h1990.toshio.beanstalk.validation.rule.ConfirmPasswordValidationRule;
+import com.gmail.h1990.toshio.beanstalk.validation.rule.EmailValidationRule;
+import com.gmail.h1990.toshio.beanstalk.validation.rule.NameValidationRule;
+import com.gmail.h1990.toshio.beanstalk.validation.rule.PasswordValidationRule;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -39,38 +43,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mobsandgeeks.saripaar.Validator;
-import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
-import com.mobsandgeeks.saripaar.annotation.Email;
-import com.mobsandgeeks.saripaar.annotation.Length;
-import com.mobsandgeeks.saripaar.annotation.NotEmpty;
-import com.mobsandgeeks.saripaar.annotation.Password;
-import com.mobsandgeeks.saripaar.annotation.Pattern;
 
 import java.util.Objects;
 
 public class SignupActivity extends AppCompatActivity {
-    @NotEmpty(message = "必須項目です。入力をお願いします")
-    @Length(min = 1, max = 10, message = "1から10文字で入力してください")
-    private EditText etName;
-
-    @NotEmpty(message = "必須項目です。入力をお願いします")
-    @Email(message = "有効なメールアドレスを入力してください")
-    private EditText etEmail;
-
-    @NotEmpty(message = "必須項目です。入力をお願いします")
-    @Password
-    @Pattern(regex = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})", message = "英文字（ 大文字、小文字 ）、数字、記号 (@#$%)を１文字以上含む6~20文字で入力してください")
-    private EditText etPassword;
-
-    @ConfirmPassword(message = "パスワードとパスワード(確認)が異なっています")
-    private EditText etConfirmPassword;
-
-    private String name;
-    private String email;
-
+    private String name, email;
     private Validator validator;
     private Validation validation;
-
     private FirebaseUser currentUser;
     private DatabaseReference databaseRootRef;
     private StorageReference storageRootRef;
@@ -87,11 +66,8 @@ public class SignupActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        initView();
         setupFirebase();
-        validator = new Validator(this);
-        validation = new Validation(validator);
-        validator.setValidationListener(validation);
+        setupValidation();
         binding.btSignup.setOnClickListener(view1 -> onSignupBtnClick());
         binding.btAddPhoto.setOnClickListener(view12 -> pickPhoto());
     }
@@ -103,17 +79,20 @@ public class SignupActivity extends AppCompatActivity {
         binding = null;
     }
 
-    private void initView() {
-        etName = findViewById(R.id.et_name);
-        etEmail = findViewById(R.id.et_email);
-        etPassword = findViewById(R.id.et_password);
-        etConfirmPassword = findViewById(R.id.et_confirm_password);
-    }
-
     private void setupFirebase() {
         firebaseAuth = FirebaseAuth.getInstance();
         storageRootRef = FirebaseStorage.getInstance().getReference();
         databaseRootRef = FirebaseDatabase.getInstance().getReference();
+    }
+
+    private void setupValidation() {
+        validator = new Validator(this);
+        validator.put(binding.etName, new NameValidationRule());
+        validator.put(binding.etEmail, new EmailValidationRule());
+        validator.put(binding.etPassword, new PasswordValidationRule());
+        validator.put(binding.etConfirmPassword, new ConfirmPasswordValidationRule(binding.etPassword));
+        validation = new Validation(validator);
+        validator.setValidationListener(validation);
     }
 
     public void pickPhoto() {
@@ -153,10 +132,11 @@ public class SignupActivity extends AppCompatActivity {
             final DatabaseReference databaseReferenceUser = databaseRootRef.child(USERS);
             UserModel userModel = new UserModel(name, email, "", "", "");
             databaseReferenceUser.child(userId).setValue(userModel).addOnSuccessListener(unused1 -> {
-                Toast toast = Toast.makeText(SignupActivity.this, R.string.signup_successfully,
-                        Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+                new ToastGenerator.Builder(getApplicationContext()).resId(R.string.signup_successfully).build();
+//                Toast toast = Toast.makeText(SignupActivity.this, R.string.signup_successfully,
+//                        Toast.LENGTH_SHORT);
+//                toast.setGravity(Gravity.CENTER, 0, 0);
+//                toast.show();
                 startActivity(new Intent(SignupActivity.this, LoginActivity.class));
             });
         });
@@ -188,9 +168,9 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onSignupBtnClick() {
-        name = validation.trimAndNormalize(etName.getText().toString());
-        email = validation.trimAndNormalize(etEmail.getText().toString());
-        String password = validation.trimAndNormalize(etPassword.getText().toString());
+        name = validation.trimAndNormalize(binding.etName.getText().toString());
+        email = validation.trimAndNormalize(binding.etEmail.getText().toString());
+        String password = validation.trimAndNormalize(binding.etPassword.getText().toString());
         if (validation.validate()) {
             firebaseAuth.createUserWithEmailAndPassword(email, password).addOnFailureListener(e -> {
                 Log.e(TAG, getString(R.string.signup_failed));

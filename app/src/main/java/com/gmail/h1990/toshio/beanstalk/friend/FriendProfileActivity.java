@@ -2,11 +2,13 @@ package com.gmail.h1990.toshio.beanstalk.friend;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import com.gmail.h1990.toshio.beanstalk.R;
 import com.gmail.h1990.toshio.beanstalk.changecolor.ColorUtils;
@@ -15,6 +17,7 @@ import com.gmail.h1990.toshio.beanstalk.common.Extras;
 import com.gmail.h1990.toshio.beanstalk.common.NodeNames;
 import com.gmail.h1990.toshio.beanstalk.databinding.ActivityFriendProfileBinding;
 import com.gmail.h1990.toshio.beanstalk.model.UserModel;
+import com.gmail.h1990.toshio.beanstalk.profile.MessageDisplayFragment;
 import com.gmail.h1990.toshio.beanstalk.talk.TalkActivity;
 import com.gmail.h1990.toshio.beanstalk.util.GlideUtils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,6 +47,7 @@ public class FriendProfileActivity extends AppCompatActivity {
 
         acceptData();
         setupFirebase();
+        setupStatusMessage();
         setProfile();
         binding.tvStatusMessage.setSelected(true);
         binding.ibTalk.setOnClickListener(view1 -> {
@@ -95,6 +99,23 @@ public class FriendProfileActivity extends AppCompatActivity {
                 uri -> GlideUtils.setPhoto(FriendProfileActivity.this, uri, R.drawable.default_background,
                         binding.ivBackgroundPhoto));
 
+    }
+
+    private void setupStatusMessage() {
+        binding.tvStatusMessage.setEms(12);
+        binding.tvStatusMessage.setSingleLine(true);
+        binding.tvStatusMessage.setSelected(true);
+        binding.tvStatusMessage.setEllipsize(TextUtils.TruncateAt.END);
+        binding.tvStatusMessage.setOnClickListener(view -> {
+            if (binding.tvStatusMessage.length() > 0) {
+                DialogFragment dialogFragment = new MessageDisplayFragment();
+                Bundle args = new Bundle();
+                String message = binding.tvStatusMessage.getText().toString();
+                args.putString(Extras.STATUS_MESSAGE, message);
+                dialogFragment.setArguments(args);
+                dialogFragment.show(getSupportFragmentManager(), MessageDisplayFragment.DIALOG_TAG);
+            }
+        });
     }
 
     @Override
